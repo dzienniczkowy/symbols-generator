@@ -1,0 +1,4 @@
+*.zip
+/tmp/
+/vendor/
+generated_couties.xml

@@ -1,0 +1,21 @@
+{
+    "name": "wulkanowy/couties-generator",
+    "description": "Generator listy powiatów dla wulkanowego",
+    "type": "project",
+    "require": {
+        "php": "^7.0",
+        "guzzlehttp/guzzle": "^6.2"
+    },
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Mikołaj Pich",
+            "email": "m.pich@outlook.com"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "Wulkanowy\\": "src/"
+        }
+    }
+}

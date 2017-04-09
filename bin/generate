@@ -1,0 +1,42 @@
+#!/usr/bin/env php
+<?php
+
+use GuzzleHttp\Client;
+use Wulkanowy\Checker;
+use Wulkanowy\CoutiesGenerator;
+use Wulkanowy\Extractor;
+use Wulkanowy\Parser;
+
+define('ROOT_DIR', dirname(__DIR__));
+
+include ROOT_DIR.'/vendor/autoload.php';
+
+try {
+	echo "\e[33m".'Rozpakowywanie...'."\e[0m";
+	$zip = glob(ROOT_DIR.'/*.zip');
+	$extractor = new Extractor(end($zip));
+	$extractor->extract(ROOT_DIR.'/tmp');
+	echo ' zakończone.'.PHP_EOL;
+
+	echo "\e[33m".'Parsowanie...'."\e[0m";
+	$xml = glob(ROOT_DIR.'/tmp/*.xml');
+	$parser = new Parser(end($xml));
+	$couties = $parser->parse();
+	echo ' zakończone.'.PHP_EOL;
+
+	echo "\e[33m".'Testowanie adresów (to chwilę potrwa)...'."\e[0m";
+	$checker = new Checker($couties, new Client(['base_uri' => 'https://uonetplus.vulcan.net.pl/']));
+	$filteredCouties = $checker->getUp();
+	echo ' Odnaleziono '.count($filteredCouties).' z '.count($couties).' adresów'.PHP_EOL;
+	// echo ' zakończone.'.PHP_EOL;
+
+	echo "\e[33m".'Generowanie pliku...'."\e[0m";
+	$generator = new CoutiesGenerator($filteredCouties);
+	$generator->saveAsXml(ROOT_DIR.'/generated_couties.xml');
+	echo ' zakończone.'.PHP_EOL;
+
+} catch (Throwable $e) {
+	echo PHP_EOL;
+	echo 'ERROR: '.$e->getMessage();
+	echo PHP_EOL;
+}
