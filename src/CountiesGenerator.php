@@ -2,8 +2,8 @@
 
 namespace Wulkanowy;
 
-use SimpleXMLElement;
 use DOMDocument;
+use SimpleXMLElement;
 
 class CountiesGenerator
 {

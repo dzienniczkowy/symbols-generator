@@ -1,5 +1,6 @@
 *.zip
+.idea/
+.php_cs.cache
 /tmp/
 /vendor/
 generated_counties.xml
-.idea/

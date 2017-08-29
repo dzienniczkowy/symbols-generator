@@ -21,7 +21,7 @@ class Checker
     {
         $c = new Color();
         $filtered = [];
-         echo PHP_EOL;
+        echo PHP_EOL;
 
         foreach ($this->counties as $key => $value) {
             $path = (new StringFormatter($value[1]))
@@ -35,14 +35,14 @@ class Checker
             $body = $response->getBody();
 
             if (strpos($body, 'Podany identyfikator klienta jest niepoprawny') === false) {
-                 echo $key.'. '.$path.' – '. $c('Udało się!')->fg('green');
+                echo $key.'. '.$path.' – '. $c('Udało się!')->fg('green');
                 $filtered[] = $value;
             } else {
-                 echo $key.'. '.$path.' – '. $c('Nie udało się!')->fg('red');
+                echo $key.'. '.$path.' – '. $c('Nie udało się!')->fg('red');
             }
-             echo PHP_EOL;
+            echo PHP_EOL;
         }
-         echo PHP_EOL;
+        echo PHP_EOL;
 
         return $filtered;
     }
