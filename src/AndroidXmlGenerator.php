@@ -40,7 +40,7 @@ class AndroidXmlGenerator implements GeneratorInterface
             $countiesValues->addChild('item', $name);
         }
 
-        $dom = new DOMDocument("1.0");
+        $dom = new DOMDocument('1.0');
         $dom->preserveWhiteSpace = false;
         $dom->formatOutput = true;
         $dom->loadXML($xml->asXML());

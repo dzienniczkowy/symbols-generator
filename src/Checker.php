@@ -36,29 +36,29 @@ class Checker
 
         $pool = new Pool($this->client, $requests($this->counties), [
             'concurrency' => 200,
-            'fulfilled' => function (ResponseInterface $response, $index) use ($c, $t, &$filtered) {
+            'fulfilled'   => function (ResponseInterface $response, $index) use ($c, $t, &$filtered) {
                 $key = $index;
                 $path = array_keys($t)[$index];
                 $value = [$t[$path], $path];
 
                 if (strpos($response->getBody(), 'Podany identyfikator klienta jest niepoprawny') !== false) {
-                    echo $key.'. '.$path.' – '. $c('Nie udało się, bo brak dziennika')->fg('red');
+                    echo $key.'. '.$path.' – '.$c('Nie udało się, bo brak dziennika')->fg('red');
                 } elseif (strpos($response->getBody(), 'Zakończono świadczenie usługi dostępu do aplikacji') !== false) {
-                    echo $key.'. '.$path.' – '. $c('Nie udało się, bo zakończono świadczenie usługi dostępu do aplikacji')->fg('red');
+                    echo $key.'. '.$path.' – '.$c('Nie udało się, bo zakończono świadczenie usługi dostępu do aplikacji')->fg('red');
                 } elseif (strpos($response->getBody(), 'Przerwa techniczna') !== false) {
-                    echo $key.'. '.$path.' – '. $c('Przerwa techniczna')->fg('yellow');
+                    echo $key.'. '.$path.' – '.$c('Przerwa techniczna')->fg('yellow');
                     $filtered[$key] = $value;
                 } elseif (strpos($response->getBody(), 'Trwa aktualizacja bazy danych') !== false) {
-                    echo $key.'. '.$path.' – '. $c('Udało się, ale trwa aktualizacja bazy danych')->fg('yellow');
+                    echo $key.'. '.$path.' – '.$c('Udało się, ale trwa aktualizacja bazy danych')->fg('yellow');
                     $filtered[$key] = $value;
                 } else {
-                    echo $key.'. '.$path.' – '. $c('Udało się!')->fg('green');
+                    echo $key.'. '.$path.' – '.$c('Udało się!')->fg('green');
                     $filtered[$key] = $value;
                 }
                 echo PHP_EOL;
             },
             'rejected' => function () {
-                throw new \Exception("Error Processing Request");
+                throw new \Exception('Error Processing Request');
             },
         ]);
 

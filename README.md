@@ -1,6 +1,7 @@
 # Generator listy powiatów dla wulkanowego
 
 [![Dependency Status](https://www.versioneye.com/user/projects/5992e36d0fb24f15c513d383/badge.svg?style=flat-square)](https://www.versioneye.com/user/projects/5992e36d0fb24f15c513d383)
+[![StyleCI](https://styleci.io/repos/88377290/shield?branch=master)](https://styleci.io/repos/88377290)
 
 ## Instalacja
 
