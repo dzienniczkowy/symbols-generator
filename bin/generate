@@ -4,7 +4,7 @@
 use Colors\Color;
 use GuzzleHttp\Client;
 use Wulkanowy\Checker;
-use Wulkanowy\CountiesGenerator;
+use Wulkanowy\AndroidXmlGenerator;
 use Wulkanowy\Extractor;
 use Wulkanowy\Parser;
 use Wulkanowy\SimpleListGenerator;
@@ -36,10 +36,10 @@ try {
 	echo $c('Testowanie zakończone.')->fg('green').PHP_EOL;
 
 	echo $c('Generowanie pliku...')->fg('green');
-	$xmlGenerator = new CountiesGenerator($filteredCounties);
-	$xmlGenerator->saveAsXml(ROOT_DIR.'/generated_counties.xml');
+	$xmlGenerator = new AndroidXmlGenerator($filteredCounties);
+	$xmlGenerator->save(ROOT_DIR.'/generated_counties.xml');
 	$textGenerator = new SimpleListGenerator($filteredCounties);
-	$textGenerator->saveAsPlainText(ROOT_DIR.'/symbols.txt');
+	$textGenerator->save(ROOT_DIR.'/symbols.txt');
 	echo ' zakończone.'.PHP_EOL;
 	echo $c('Zapisano do pliku `generated_counties.xml` i symbols.txt.')->fg('green').PHP_EOL;
 

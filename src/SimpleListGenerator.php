@@ -2,7 +2,7 @@
 
 namespace Wulkanowy;
 
-class SimpleListGenerator
+class SimpleListGenerator implements GeneratorInterface
 {
     private $counties;
 
@@ -11,7 +11,7 @@ class SimpleListGenerator
         $this->counties = $counties;
     }
 
-    public function saveAsPlainText(string $filename) : bool
+    public function save(string $filename) : bool
     {
         $items = [];
 

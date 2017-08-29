@@ -5,7 +5,7 @@ namespace Wulkanowy;
 use DOMDocument;
 use SimpleXMLElement;
 
-class CountiesGenerator
+class AndroidXmlGenerator implements GeneratorInterface
 {
     private $counties;
 
@@ -14,7 +14,7 @@ class CountiesGenerator
         $this->counties = $counties;
     }
 
-    public function saveAsXml(string $filename) : bool
+    public function save(string $filename) : bool
     {
         $xml = new SimpleXMLElement('<?xml version="1.0" encoding="utf-8"?><resources/>');
         $xml->addAttribute('xmlns:xmlns:tools', 'http://schemas.android.com/tools');
