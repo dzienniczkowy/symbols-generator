@@ -45,6 +45,10 @@ class CountiesGenerator
         $dom->formatOutput = true;
         $dom->loadXML($xml->asXML());
 
-        return file_put_contents($filename, $dom->saveXML());
+        $output = preg_replace_callback('/^( +)</m', function ($a) {
+            return str_repeat(' ', intval(strlen($a[1]) / 2) * 4).'<';
+        }, $dom->saveXML());
+
+        return file_put_contents($filename, $output);
     }
 }
