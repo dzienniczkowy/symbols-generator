@@ -56,7 +56,7 @@ class Parser
         return mb_convert_case(
             mb_strtolower($string),
             MB_CASE_TITLE,
-            "UTF-8"
+            'UTF-8'
         );
     }
 }
