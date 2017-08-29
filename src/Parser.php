@@ -7,6 +7,8 @@ use SimpleXMLElement;
 
 class Parser
 {
+    private $filename;
+
     public function __construct(string $filename)
     {
         if (empty($filename)) {

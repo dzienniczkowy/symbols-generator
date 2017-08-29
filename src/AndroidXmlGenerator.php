@@ -24,20 +24,14 @@ class AndroidXmlGenerator implements GeneratorInterface
         $countiesKeys->addAttribute('name', 'counties');
 
         foreach ($this->counties as $name) {
-            $countiesKeys->addChild('item', $name[1]);
+            $countiesKeys->addChild('item', $name[0]);
         }
 
         $countiesValues = $xml->addChild('string-array');
         $countiesValues->addAttribute('name', 'counties_values');
 
         foreach ($this->counties as $name) {
-            $name = (new StringFormatter($name[1]))
-                    ->latinize()
-                    ->lowercase()
-                    ->removeDashes()
-                    ->removeSpaces()
-                    ->get();
-            $countiesValues->addChild('item', $name);
+            $countiesValues->addChild('item', $name[1]);
         }
 
         $dom = new DOMDocument('1.0');

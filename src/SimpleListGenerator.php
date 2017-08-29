@@ -16,12 +16,7 @@ class SimpleListGenerator implements GeneratorInterface
         $items = [];
 
         foreach ($this->counties as $name) {
-            $items[] = (new StringFormatter($name[1]))
-                    ->latinize()
-                    ->lowercase()
-                    ->removeDashes()
-                    ->removeSpaces()
-                    ->get();
+            $items[] = $name[0];
         }
 
         return file_put_contents($filename, implode(PHP_EOL, $items));
