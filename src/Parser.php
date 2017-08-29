@@ -26,7 +26,7 @@ class Parser
 
         foreach ($xml->catalog->row as $element) {
             $description = (string) $element->NAZWA_DOD;
-            $name = ucfirst($element->NAZWA);
+            $name = mb_strtolower($element->NAZWA);
 
             $path = (new StringFormatter($name))
                     ->latinize()
@@ -42,12 +42,21 @@ class Parser
             if ('gmina miejska' == $description
                 || 'gmina miejsko-wiejska' == $description
                 || 'gmina wiejska' == $description) {
-                $counties['gmina'.$path] = 'Gmina '.$name;
+                $counties['gmina'.$path] = 'Gmina '.$this->upper($name);
             }
 
-            $counties[$path] = $name;
+            $counties[$path] = $this->upper($name);
         }
 
         return $counties;
+    }
+
+    private function upper(string $string) : string
+    {
+        return mb_convert_case(
+            mb_strtolower($string),
+            MB_CASE_TITLE,
+            "UTF-8"
+        );
     }
 }
