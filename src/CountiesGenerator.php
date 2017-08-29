@@ -5,7 +5,7 @@ namespace Wulkanowy;
 use SimpleXMLElement;
 use DOMDocument;
 
-class CoutiesGenerator
+class CountiesGenerator
 {
     private $counties;
 

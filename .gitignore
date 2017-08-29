@@ -1,4 +1,5 @@
 *.zip
 /tmp/
 /vendor/
-generated_couties.xml
+generated_counties.xml
+.idea/

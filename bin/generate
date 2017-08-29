@@ -1,9 +1,10 @@
 #!/usr/bin/env php
 <?php
 
+use Colors\Color;
 use GuzzleHttp\Client;
 use Wulkanowy\Checker;
-use Wulkanowy\CoutiesGenerator;
+use Wulkanowy\CountiesGenerator;
 use Wulkanowy\Extractor;
 use Wulkanowy\Parser;
 
@@ -12,31 +13,33 @@ define('ROOT_DIR', dirname(__DIR__));
 include ROOT_DIR.'/vendor/autoload.php';
 
 try {
-	echo "\e[33m".'Rozpakowywanie...'."\e[0m";
+    $c = new Color();
+	echo $c('Rozpakowywanie...')->fg('green');
 	$zip = glob(ROOT_DIR.'/*.zip');
 	$extractor = new Extractor(end($zip));
 	$extractor->extract(ROOT_DIR.'/tmp');
 	echo ' zakończone.'.PHP_EOL;
 
-	echo "\e[33m".'Parsowanie...'."\e[0m";
+	echo $c('Parsowanie...')->fg('green');
 	$xml = glob(ROOT_DIR.'/tmp/*.xml');
 	$parser = new Parser(end($xml));
-	$couties = $parser->parse();
+	$counties = $parser->parse();
 	echo ' zakończone.'.PHP_EOL;
 
-	echo "\e[33m".'Testowanie adresów (to chwilę potrwa)...'."\e[0m";
-	$checker = new Checker($couties, new Client(['base_uri' => 'https://uonetplus.vulcan.net.pl/']));
-	$filteredCouties = $checker->getUp();
-	echo ' Odnaleziono '.count($filteredCouties).' z '.count($couties).' adresów'.PHP_EOL;
-	// echo ' zakończone.'.PHP_EOL;
+	echo $c('Testowanie adresów...')->fg('green');
+	$checker = new Checker($counties, new Client(['base_uri' => 'https://uonetplus.vulcan.net.pl/']));
+	$filteredCounties = $checker->getUp();
+	echo $c('Odnaleziono '.count($filteredCounties).' z '.count($counties).' adresów')->fg('yellow').PHP_EOL;
+	echo $c('Testowanie zakończone.')->fg('green').PHP_EOL;
 
-	echo "\e[33m".'Generowanie pliku...'."\e[0m";
-	$generator = new CoutiesGenerator($filteredCouties);
-	$generator->saveAsXml(ROOT_DIR.'/generated_couties.xml');
+	echo $c('Generowanie pliku...')->fg('green');
+	$generator = new CountiesGenerator($filteredCounties);
+	$generator->saveAsXml(ROOT_DIR.'/generated_counties.xml');
 	echo ' zakończone.'.PHP_EOL;
+	echo $c('Zapisano do pliku `generated_counties.xml`.')->fg('blue').PHP_EOL;
 
 } catch (Throwable $e) {
 	echo PHP_EOL;
-	echo 'ERROR: '.$e->getMessage();
+	echo $c('ERROR: '.$e->getMessage())->fg('red');
 	echo PHP_EOL;
 }

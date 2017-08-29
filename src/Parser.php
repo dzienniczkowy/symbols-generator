@@ -2,6 +2,7 @@
 
 namespace Wulkanowy;
 
+use InvalidArgumentException;
 use SimpleXMLElement;
 
 class Parser

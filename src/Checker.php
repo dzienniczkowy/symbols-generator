@@ -2,22 +2,28 @@
 
 namespace Wulkanowy;
 
+use Colors\Color;
+use GuzzleHttp\Client;
+
 class Checker
 {
+    private $counties;
+
     private $client;
 
-    public function __construct(array $couties, $client)
+    public function __construct(array $counties, Client $client)
     {
-        $this->couties = $couties;
+        $this->counties = $counties;
         $this->client = $client;
     }
 
     public function getUp() : array
     {
+        $c = new Color();
         $filtered = [];
-        // echo PHP_EOL;
+         echo PHP_EOL;
 
-        foreach ($this->couties as $key => $value) {
+        foreach ($this->counties as $key => $value) {
             $path = (new StringFormatter($value[1]))
                     ->latinize()
                     ->lowercase()
@@ -29,14 +35,14 @@ class Checker
             $body = $response->getBody();
 
             if (strpos($body, 'Podany identyfikator klienta jest niepoprawny') === false) {
-                // echo $key.' '.$path.' – Udało się!';
+                 echo $key.'. '.$path.' – '. $c('Udało się!')->fg('green');
                 $filtered[] = $value;
             } else {
-                // echo $key.' '.$path.' – Nie udało się!';
+                 echo $key.'. '.$path.' – '. $c('Nie udało się!')->fg('red');
             }
-            // echo PHP_EOL;
+             echo PHP_EOL;
         }
-        // echo PHP_EOL;
+         echo PHP_EOL;
 
         return $filtered;
     }
