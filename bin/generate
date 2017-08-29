@@ -7,6 +7,7 @@ use Wulkanowy\Checker;
 use Wulkanowy\CountiesGenerator;
 use Wulkanowy\Extractor;
 use Wulkanowy\Parser;
+use Wulkanowy\SimpleListGenerator;
 
 define('ROOT_DIR', dirname(__DIR__));
 
@@ -26,20 +27,24 @@ try {
 	$counties = $parser->parse();
 	echo ' zakończone.'.PHP_EOL;
 
-	echo $c('Testowanie adresów...')->fg('green');
+	echo $c('Utworzono listę '.count($counties).' elementów.')->fg('green').PHP_EOL;
+
+	echo $c('Testowanie...')->fg('green');
 	$checker = new Checker($counties, new Client(['base_uri' => 'https://uonetplus.vulcan.net.pl/']));
 	$filteredCounties = $checker->getUp();
-	echo $c('Odnaleziono '.count($filteredCounties).' z '.count($counties).' adresów')->fg('yellow').PHP_EOL;
+	echo $c('Odnaleziono '.count($filteredCounties).' z '.count($counties))->fg('yellow').PHP_EOL;
 	echo $c('Testowanie zakończone.')->fg('green').PHP_EOL;
 
 	echo $c('Generowanie pliku...')->fg('green');
-	$generator = new CountiesGenerator($filteredCounties);
-	$generator->saveAsXml(ROOT_DIR.'/generated_counties.xml');
+	$xmlGenerator = new CountiesGenerator($filteredCounties);
+	$xmlGenerator->saveAsXml(ROOT_DIR.'/generated_counties.xml');
+	$textGenerator = new SimpleListGenerator($filteredCounties);
+	$textGenerator->saveAsPlainText(ROOT_DIR.'/symbols.txt');
 	echo ' zakończone.'.PHP_EOL;
-	echo $c('Zapisano do pliku `generated_counties.xml`.')->fg('blue').PHP_EOL;
+	echo $c('Zapisano do pliku `generated_counties.xml` i symbols.txt.')->fg('green').PHP_EOL;
 
 } catch (Throwable $e) {
 	echo PHP_EOL;
-	echo $c('ERROR: '.$e->getMessage())->fg('red');
+	echo $c('ERROR: '.$e)->fg('red');
 	echo PHP_EOL;
 }

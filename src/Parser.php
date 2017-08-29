@@ -24,18 +24,27 @@ class Parser
 
         foreach ($xml->catalog->row as $element) {
             $description = (string) $element->NAZWA_DOD;
-            $name = (string) $element->NAZWA;
+            $name = ucfirst($element->NAZWA);
+
+            $path = (new StringFormatter($name))
+                    ->latinize()
+                    ->lowercase()
+                    ->removeDashes()
+                    ->removeSpaces()
+                    ->get();
 
             if ('powiat' == $description) {
-                $counties[] = [$description, ucfirst('powiat '.$name)];
-            } elseif ('miasto na prawach powiatu' == $description) {
-                $counties[] = [$description, $name];
+                $counties['powiat'.$path] = 'Powiat '.$name;
             }
-        }
 
-        usort($counties, function ($a, $b) {
-            return $a[1] <=> $b[1];
-        });
+            if ('gmina miejska' == $description
+                || 'gmina miejsko-wiejska' == $description
+                || 'gmina wiejska' == $description) {
+                $counties['gmina'.$path] = 'Gmina '.$name;
+            }
+
+            $counties[$path] = $name;
+        }
 
         return $counties;
     }
