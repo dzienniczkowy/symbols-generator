@@ -1,6 +1,6 @@
 <?php
 
-namespace Wulkanowy;
+namespace Wulkanowy\SymbolsGenerator;
 
 use DOMDocument;
 use SimpleXMLElement;
@@ -21,14 +21,14 @@ class AndroidXmlGenerator implements GeneratorInterface
         $xml->addAttribute('android:tools:ignore', 'MissingTranslation');
 
         $countiesKeys = $xml->addChild('string-array');
-        $countiesKeys->addAttribute('name', 'counties');
+        $countiesKeys->addAttribute('name', 'symbols');
 
         foreach ($this->counties as $name) {
             $countiesKeys->addChild('item', $name[0]);
         }
 
         $countiesValues = $xml->addChild('string-array');
-        $countiesValues->addAttribute('name', 'counties_values');
+        $countiesValues->addAttribute('name', 'symbols_values');
 
         foreach ($this->counties as $name) {
             $countiesValues->addChild('item', $name[1]);
@@ -40,7 +40,7 @@ class AndroidXmlGenerator implements GeneratorInterface
         $dom->loadXML($xml->asXML());
 
         $output = preg_replace_callback('/^( +)</m', function ($a) {
-            return str_repeat(' ', intval(strlen($a[1]) / 2) * 4).'<';
+            return str_repeat(' ', (int) (strlen($a[1]) / 2) * 4).'<';
         }, $dom->saveXML());
 
         return file_put_contents($filename, $output);

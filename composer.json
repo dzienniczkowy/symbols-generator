@@ -1,6 +1,6 @@
 {
-    "name": "wulkanowy/couties-generator",
-    "description": "Generator listy powiatów dla wulkanowego",
+    "name": "wulkanowy/symbols-generator",
+    "description": "Symbols generator for wulkanowy",
     "type": "project",
     "require": {
         "php": "^7.0",
@@ -16,7 +16,7 @@
     ],
     "autoload": {
         "psr-4": {
-            "Wulkanowy\\": "src/"
+            "Wulkanowy\\SymbolsGenerator\\": "src/"
         }
     }
 }

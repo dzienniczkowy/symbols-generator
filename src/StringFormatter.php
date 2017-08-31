@@ -1,6 +1,6 @@
 <?php
 
-namespace Wulkanowy;
+namespace Wulkanowy\SymbolsGenerator;
 
 class StringFormatter
 {

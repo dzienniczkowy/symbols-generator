@@ -3,11 +3,11 @@
 
 use Colors\Color;
 use GuzzleHttp\Client;
-use Wulkanowy\Checker;
-use Wulkanowy\AndroidXmlGenerator;
-use Wulkanowy\Extractor;
-use Wulkanowy\Parser;
-use Wulkanowy\SimpleListGenerator;
+use Wulkanowy\SymbolsGenerator\Checker;
+use Wulkanowy\SymbolsGenerator\AndroidXmlGenerator;
+use Wulkanowy\SymbolsGenerator\Extractor;
+use Wulkanowy\SymbolsGenerator\Parser;
+use Wulkanowy\SymbolsGenerator\SimpleListGenerator;
 
 define('ROOT_DIR', dirname(__DIR__));
 
@@ -37,11 +37,11 @@ try {
 
 	echo $c('Generowanie pliku...')->fg('green');
 	$xmlGenerator = new AndroidXmlGenerator($filteredCounties);
-	$xmlGenerator->save(ROOT_DIR.'/generated_counties.xml');
+	$xmlGenerator->save(ROOT_DIR.'/symbols.xml');
 	$textGenerator = new SimpleListGenerator($filteredCounties);
 	$textGenerator->save(ROOT_DIR.'/symbols.txt');
 	echo ' zakończone.'.PHP_EOL;
-	echo $c('Zapisano do pliku `generated_counties.xml` i symbols.txt.')->fg('green').PHP_EOL;
+	echo $c('Zapisano do pliku symbols.xml i symbols.txt.')->fg('green').PHP_EOL;
 
 } catch (Throwable $e) {
 	echo PHP_EOL;

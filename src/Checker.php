@@ -1,6 +1,6 @@
 <?php
 
-namespace Wulkanowy;
+namespace Wulkanowy\SymbolsGenerator;
 
 use Colors\Color;
 use GuzzleHttp\Client;
