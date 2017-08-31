@@ -35,13 +35,13 @@ class Parser
                     ->removeSpaces()
                     ->get();
 
-            if ('powiat' == $description) {
+            if ('powiat' === $description) {
                 $counties['powiat'.$path] = 'Powiat '.$name;
             }
 
-            if ('gmina miejska' == $description
-                || 'gmina miejsko-wiejska' == $description
-                || 'gmina wiejska' == $description) {
+            if ('gmina miejska' === $description
+                || 'gmina miejsko-wiejska' === $description
+                || 'gmina wiejska' === $description) {
                 $counties['gmina'.$path] = 'Gmina '.$this->upper($name);
             }
 
