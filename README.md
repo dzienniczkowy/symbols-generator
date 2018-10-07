@@ -1,7 +1,6 @@
 # Generator symboli dla wulkanowego
 
 [![Latest Stable Version](https://poser.pugx.org/wulkanowy/symbols-generator/version?format=flat-square)](https://packagist.org/packages/wulkanowy/symbols-generator)
-[![Dependency Status](https://www.versioneye.com/user/projects/5992e36d0fb24f15c513d383/badge.svg?style=flat-square)](https://www.versioneye.com/user/projects/5992e36d0fb24f15c513d383)
 [![StyleCI](https://styleci.io/repos/88377290/shield?branch=master)](https://styleci.io/repos/88377290)
 
 ## Instalacja
