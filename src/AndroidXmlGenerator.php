@@ -40,7 +40,7 @@ class AndroidXmlGenerator implements GeneratorInterface
         $dom->loadXML($xml->asXML());
 
         $output = preg_replace_callback('/^( +)</m', function ($a) {
-            return str_repeat(' ', (int) (strlen($a[1]) / 2) * 4).'<';
+            return str_repeat(' ', (int) (\strlen($a[1]) / 2) * 4).'<';
         }, $dom->saveXML());
 
         return file_put_contents($filename, $output);

@@ -7,6 +7,8 @@ use ZipArchive;
 
 class Extractor
 {
+    private $filename;
+
     public function __construct(string $filename)
     {
         if (empty($filename)) {

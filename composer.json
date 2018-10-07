@@ -4,8 +4,14 @@
     "type": "project",
     "require": {
         "php": "^7.0",
+        "ext-xml": "*",
+        "ext-curl": "*",
         "guzzlehttp/guzzle": "^6.2",
-        "kevinlebrun/colors.php": "^1.0"
+        "kevinlebrun/colors.php": "^1.0",
+        "ext-simplexml": "*",
+        "ext-mbstring": "*",
+        "ext-dom": "*",
+        "ext-zip": "*"
     },
     "license": "MIT",
     "authors": [

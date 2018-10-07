@@ -58,7 +58,7 @@ class Checker
                 echo PHP_EOL;
             },
             'rejected' => function () {
-                throw new \Exception('Error Processing Request');
+                throw new \RuntimeException('Error Processing Request');
             },
         ]);
 
