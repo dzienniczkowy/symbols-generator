@@ -1,7 +1,11 @@
-*.zip
 .idea/
-.php_cs.cache
-/tmp/
+*.zip
+tmp/
+api_symbols.xml
+
+###> symfony/framework-bundle ###
+/.env
+/public/bundles/
+/var/
 /vendor/
-symbols.txt
-symbols.xml
+###< symfony/framework-bundle ###

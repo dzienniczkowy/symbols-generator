@@ -3,26 +3,63 @@
     "description": "Symbols generator for wulkanowy",
     "type": "project",
     "require": {
-        "php": "^7.0",
-        "ext-xml": "*",
-        "ext-curl": "*",
-        "guzzlehttp/guzzle": "^6.2",
-        "kevinlebrun/colors.php": "^1.0",
-        "ext-simplexml": "*",
-        "ext-mbstring": "*",
+        "php": "^7.1.3",
         "ext-dom": "*",
-        "ext-zip": "*"
+        "ext-iconv": "*",
+        "ext-json": "*",
+        "ext-simplexml": "*",
+        "ext-zip": "*",
+        "guzzlehttp/guzzle": "^6.3",
+        "symfony/console": "^4.0",
+        "symfony/flex": "^1.0",
+        "symfony/framework-bundle": "^4.0",
+        "symfony/yaml": "^4.0"
     },
-    "license": "MIT",
-    "authors": [
-        {
-            "name": "Mikołaj Pich",
-            "email": "m.pich@outlook.com"
-        }
-    ],
+    "require-dev": {
+        "sensiolabs/security-checker": "^4.1",
+        "symfony/dotenv": "^4.0"
+    },
+    "config": {
+        "preferred-install": {
+            "*": "dist"
+        },
+        "sort-packages": true
+    },
     "autoload": {
         "psr-4": {
             "Wulkanowy\\SymbolsGenerator\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Wulkanowy\\SymbolsGenerator\\Tests\\": "tests/"
+        }
+    },
+    "replace": {
+        "symfony/polyfill-iconv": "*",
+        "symfony/polyfill-php71": "*",
+        "symfony/polyfill-php70": "*",
+        "symfony/polyfill-php56": "*"
+    },
+    "scripts": {
+        "auto-scripts": {
+            "security-checker security:check": "script",
+            "cache:clear": "symfony-cmd",
+            "assets:install --symlink --relative %PUBLIC_DIR%": "symfony-cmd"
+        },
+        "post-install-cmd": [
+            "@auto-scripts"
+        ],
+        "post-update-cmd": [
+            "@auto-scripts"
+        ]
+    },
+    "conflict": {
+        "symfony/symfony": "*"
+    },
+    "extra": {
+        "symfony": {
+            "allow-contrib": false
         }
     }
 }
