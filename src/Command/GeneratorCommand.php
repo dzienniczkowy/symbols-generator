@@ -17,10 +17,12 @@ class GeneratorCommand extends Command
     }
 
     /**
-     * @param InputInterface $input
+     * @param InputInterface  $input
      * @param OutputInterface $output
-     * @return int|void|null
+     *
      * @throws \Exception
+     *
+     * @return int|void|null
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {

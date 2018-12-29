@@ -2,7 +2,6 @@
 
 namespace Wulkanowy\SymbolsGenerator\Command;
 
-
 use GuzzleHttp\Client;
 use GuzzleHttp\Pool;
 use GuzzleHttp\Psr7\Request;
@@ -35,11 +34,11 @@ class CheckCommand extends Command
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $output->write('Testowanie...');
-        $unchecked = json_decode(file_get_contents($this->root . '/tmp/unchecked-symbols.json'), true);
+        $unchecked = json_decode(file_get_contents($this->root.'/tmp/unchecked-symbols.json'), true);
         $start = microtime(true);
         $amount = $this->check($unchecked, $output);
-        $output->writeln('Testowanie zakończone w ' . round(microtime(true) - $start, 2) . ' sekund(y).');
-        $output->writeln('Odnaleziono ' . $amount . ' z ' . count($unchecked));
+        $output->writeln('Testowanie zakończone w '.round(microtime(true) - $start, 2).' sekund(y).');
+        $output->writeln('Odnaleziono '.$amount.' z '.count($unchecked));
     }
 
     private function check(array $symbols, OutputInterface $o): int
@@ -55,10 +54,10 @@ class CheckCommand extends Command
         $o->write(PHP_EOL);
         $pool = new Pool($this->client, $requests($symbols), [
             'concurrency' => 25,
-            'fulfilled' => function (ResponseInterface $response, $index) use ($o, $symbols, $amount, &$filtered) {
+            'fulfilled'   => function (ResponseInterface $response, $index) use ($o, $symbols, $amount, &$filtered) {
                 $path = array_keys($symbols)[$index];
                 $value = [$symbols[$path], $path];
-                $o->write('[' . ($index + 1) . '/' . $amount . '] ' . $path . ' – ');
+                $o->write('['.($index + 1).'/'.$amount.'] '.$path.' – ');
                 if (strpos($response->getBody(), 'Podany identyfikator klienta jest niepoprawny') !== false) {
                     $o->writeln('<fg=red>Nie udało się, bo brak dziennika</>');
                 } elseif (strpos($response->getBody(), 'Zakończono świadczenie usługi dostępu do aplikacji') !== false) {
@@ -83,7 +82,7 @@ class CheckCommand extends Command
             return $a[1] <=> $b[1];
         });
 
-        file_put_contents($this->root . '/tmp/checked-symbols.json', json_encode($filtered, JSON_PRETTY_PRINT));
+        file_put_contents($this->root.'/tmp/checked-symbols.json', json_encode($filtered, JSON_PRETTY_PRINT));
 
         return count($filtered);
     }

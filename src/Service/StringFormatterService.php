@@ -2,7 +2,6 @@
 
 namespace Wulkanowy\SymbolsGenerator\Service;
 
-
 class StringFormatterService
 {
     private $string;
@@ -10,6 +9,7 @@ class StringFormatterService
     public function set(string $string)
     {
         $this->string = $string;
+
         return $this;
     }
 
@@ -41,24 +41,28 @@ class StringFormatterService
             "\xf1" => 'n', "\xd1" => 'N',
         ];
         $this->string = strtr($this->string, $tab);
+
         return $this;
     }
 
     public function removeSpaces()
     {
         $this->string = str_replace(' ', '', $this->string);
+
         return $this;
     }
 
     public function lowercase()
     {
         $this->string = strtolower($this->string);
+
         return $this;
     }
 
     public function removeDashes()
     {
         $this->string = str_replace('-', '', $this->string);
+
         return $this;
     }
 

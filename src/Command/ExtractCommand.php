@@ -38,17 +38,17 @@ class ExtractCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $output->write("Rozpakowywanie...");
+        $output->write('Rozpakowywanie...');
         $this->extract();
-        $output->writeln(" zakończone");
+        $output->writeln(' zakończone');
     }
 
     public function extract()
     {
-        $files = glob($this->root . '/*.zip');
+        $files = glob($this->root.'/*.zip');
 
         if ($this->zip->open(end($files)) === true) {
-            $this->zip->extractTo($this->root . '/tmp');
+            $this->zip->extractTo($this->root.'/tmp');
             $this->zip->close();
         }
     }

@@ -28,15 +28,15 @@ class GenerateCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $output->write("Generowanie pliku...");
+        $output->write('Generowanie pliku...');
         $this->generate();
-        $output->writeln(" zakończone");
+        $output->writeln(' zakończone');
         $output->writeln('<fg=green>Zapisano do pliku api_symbols.xml</>');
     }
 
     private function generate()
     {
-        $counties = \json_decode(file_get_contents($this->root . '/tmp/checked-symbols.json'));
+        $counties = \json_decode(file_get_contents($this->root.'/tmp/checked-symbols.json'));
 
         $xml = new SimpleXMLElement('<?xml version="1.0" encoding="utf-8"?><resources/>');
         $xml->addAttribute('xmlns:xmlns:tools', 'http://schemas.android.com/tools');
@@ -56,9 +56,9 @@ class GenerateCommand extends Command
         $dom->formatOutput = true;
         $dom->loadXML($xml->asXML());
         $output = preg_replace_callback('/^( +)</m', function ($a) {
-            return str_repeat(' ', (int)(\strlen($a[1]) / 2) * 4) . '<';
+            return str_repeat(' ', (int) (\strlen($a[1]) / 2) * 4).'<';
         }, $dom->saveXML());
 
-        return file_put_contents($this->root . '/api_symbols.xml', $output);
+        return file_put_contents($this->root.'/api_symbols.xml', $output);
     }
 }
