@@ -11,15 +11,15 @@ use Wulkanowy\SymbolsGenerator\Service\StringFormatterService;
 class ParseCommand extends Command
 {
     /** @var string */
-    private $root;
+    private $tmp;
 
     /** @var StringFormatterService */
     private $formatter;
 
-    public function __construct(string $root, StringFormatterService $formatter)
+    public function __construct(string $tmp, StringFormatterService $formatter)
     {
         parent::__construct();
-        $this->root = $root;
+        $this->tmp = $tmp;
         $this->formatter = $formatter;
     }
 
@@ -42,7 +42,7 @@ class ParseCommand extends Command
 
     private function parse(): int
     {
-        $files = glob($this->root.'/tmp/*.xml');
+        $files = glob($this->tmp.'/*.xml');
 
         $xml = new SimpleXMLElement(file_get_contents(end($files)));
         $symbols = [];
@@ -67,7 +67,7 @@ class ParseCommand extends Command
             $symbols[$path] = $this->formatter->set($name)->upper()->get();
         }
 
-        file_put_contents($this->root.'/tmp/unchecked-symbols.json', json_encode($symbols, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE));
+        file_put_contents($this->tmp.'/unchecked-symbols.json', json_encode($symbols, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE));
 
         return count($symbols);
     }

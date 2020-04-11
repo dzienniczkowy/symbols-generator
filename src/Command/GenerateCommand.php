@@ -13,10 +13,14 @@ class GenerateCommand extends Command
     /** @var string */
     private $root;
 
-    public function __construct(string $root)
+    /** @var string */
+    private $tmp;
+
+    public function __construct(string $root, string $tmp)
     {
         parent::__construct();
         $this->root = $root;
+        $this->tmp = $tmp;
     }
 
     protected function configure(): void
@@ -38,7 +42,7 @@ class GenerateCommand extends Command
 
     private function generate()
     {
-        $counties = \json_decode(file_get_contents($this->root.'/tmp/checked-symbols-working.json'));
+        $counties = \json_decode(file_get_contents($this->tmp.'/checked-symbols-working.json'));
 
         $xml = new SimpleXMLElement('<?xml version="1.0" encoding="utf-8"?><resources/>');
         $xml->addAttribute('xmlns:xmlns:tools', 'http://schemas.android.com/tools');

@@ -22,7 +22,7 @@ class CheckCommand extends Command
     private const CONCURRENCY = 25;
 
     /** @var string */
-    private $root;
+    private $tmp;
 
     /** @var Filesystem */
     private $filesystem;
@@ -36,10 +36,10 @@ class CheckCommand extends Command
     /** @var int */
     private $concurrency;
 
-    public function __construct(string $root, Filesystem $filesystem)
+    public function __construct(string $tmp, Filesystem $filesystem)
     {
         parent::__construct();
-        $this->root = $root;
+        $this->tmp = $tmp;
         $this->filesystem = $filesystem;
     }
 
@@ -64,7 +64,7 @@ class CheckCommand extends Command
         ]);
 
         $output->write('Testowanie...');
-        $unchecked = json_decode(file_get_contents($this->root . '/tmp/unchecked-symbols.json'), true);
+        $unchecked = json_decode(file_get_contents($this->tmp . '/unchecked-symbols.json'), true);
 
         $start = microtime(true);
         $results = $this->check($unchecked, $output);
@@ -171,7 +171,7 @@ class CheckCommand extends Command
         });
 
         $this->filesystem->dumpFile(
-            $this->root . '/tmp/checked-symbols-' . $type . '.json',
+            $this->tmp . '/checked-symbols-' . $type . '.json',
             json_encode($results[$type], JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE)
         );
     }

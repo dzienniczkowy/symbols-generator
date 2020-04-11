@@ -21,10 +21,14 @@ class ExtractCommand extends Command
     /** @var string */
     private $root;
 
-    public function __construct(string $root)
+    /** @var string */
+    private $tmp;
+
+    public function __construct(string $root, string $tmp)
     {
         parent::__construct();
         $this->root = $root;
+        $this->tmp = $tmp;
         $this->filesystem = new Filesystem();
         $this->zip = new ZipArchive();
     }
@@ -50,7 +54,7 @@ class ExtractCommand extends Command
         $files = glob($this->root.'/*.zip');
 
         if ($this->zip->open(end($files)) === true) {
-            $this->zip->extractTo($this->root.'/tmp');
+            $this->zip->extractTo($this->tmp);
             $this->zip->close();
         }
     }

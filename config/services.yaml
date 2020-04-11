@@ -23,15 +23,17 @@ services:
     Wulkanowy\SymbolsGenerator\Command\ExtractCommand:
         arguments:
             $root: '%kernel.project_dir%'
+            $tmp: '%kernel.project_dir%/var/generator'
 
     Wulkanowy\SymbolsGenerator\Command\ParseCommand:
         arguments:
-            $root: '%kernel.project_dir%'
+            $tmp: '%kernel.project_dir%/var/generator'
 
     Wulkanowy\SymbolsGenerator\Command\CheckCommand:
         arguments:
-            $root: '%kernel.project_dir%'
+            $tmp: '%kernel.project_dir%/var/generator'
 
     Wulkanowy\SymbolsGenerator\Command\GenerateCommand:
         arguments:
             $root: '%kernel.project_dir%'
+            $tmp: '%kernel.project_dir%/var/generator'
