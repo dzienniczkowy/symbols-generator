@@ -5,6 +5,7 @@ namespace Wulkanowy\SymbolsGenerator\Command;
 use GuzzleHttp\Client;
 use GuzzleHttp\Pool;
 use GuzzleHttp\Psr7\Request;
+use GuzzleHttp\RedirectMiddleware;
 use Psr\Http\Message\ResponseInterface;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Helper\Table;
@@ -49,8 +50,7 @@ class CheckCommand extends Command
             ->setDescription('Check symbols')
             ->addArgument('domain', InputArgument::OPTIONAL, 'Register main domain to check', self::BASE_URL)
             ->addOption('timeout', null, InputArgument::OPTIONAL, 'Timeout', self::TIMEOUT)
-            ->addOption('concurrency', null, InputArgument::OPTIONAL, 'Timeout', self::CONCURRENCY)
-        ;
+            ->addOption('concurrency', null, InputArgument::OPTIONAL, 'Timeout', self::CONCURRENCY);
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)
@@ -58,7 +58,10 @@ class CheckCommand extends Command
         $domain = $input->getArgument("domain");
         $this->timeout = $input->getOption("timeout");
         $this->concurrency = $input->getOption("concurrency");
-        $this->client = new Client(['base_uri' => 'https://uonetplus.' . $domain . '/']);
+        $this->client = new Client([
+            'base_uri' => 'https://uonetplus.' . $domain . '/',
+            'allow_redirects' => ['track_redirects' => true]
+        ]);
 
         $output->write('Testowanie...');
         $unchecked = json_decode(file_get_contents($this->root . '/tmp/unchecked-symbols.json'), true);
@@ -70,6 +73,7 @@ class CheckCommand extends Command
         $output->writeln("Testowanie... zakończone.");
 
         $this->saveResults($results, 'working');
+        $this->saveResults($results, 'adfslight');
         $this->saveResults($results, 'invalid');
         $this->saveResults($results, 'end');
         $this->saveResults($results, 'exception');
@@ -86,6 +90,7 @@ class CheckCommand extends Command
     {
         $results = [
             'working' => [],
+            'adfslight' => [],
             'invalid' => [],
             'end' => [],
             'exception' => [],
@@ -106,6 +111,7 @@ class CheckCommand extends Command
             'concurrency' => $this->concurrency,
             'options' => ['timeout' => $this->timeout],
             'fulfilled' => function (ResponseInterface $response, $index) use ($s, $symbols, $amount, &$results) {
+                $effectiveUrl = $response->getHeader(RedirectMiddleware::HISTORY_HEADER);
                 [$value, $prefix] = $this->getPrefixWithSymbol($amount, $symbols, $index);
 
                 if (strpos($response->getBody(), 'Podany identyfikator klienta jest niepoprawny') !== false) {
@@ -126,6 +132,9 @@ class CheckCommand extends Command
                     $results['working'][] = $value;
                     $results['db'][] = $value;
                 } else {
+                    if (strpos(end($effectiveUrl), 'adfslight') !== false) {
+                        $results['adfslight'][] = $value;
+                    }
                     $s->overwrite($prefix . '<fg=green>Udało się!</>');
                     $results['working'][] = $value;
                 }
@@ -174,6 +183,7 @@ class CheckCommand extends Command
         $table->setHeaders(['Całkowity czas testowania', $totalTime . ' sec.']);
         $table->addRow(['Wszystkie symbole', count($unchecked)]);
         $table->addRow(['Odnalezione symbole', count($results['working'])]);
+        $table->addRow(['Odnalezione symbole (tylko adfslight)', count($results['adfslight'])]);
         $table->addRow(['Błędne symbole', count($results['invalid'])]);
         $table->addRow(['Zakończono dostęp do aplikacji', count($results['end'])]);
         $table->addRow(['Nieoczekiwany wyjątek', count($results['exception'])]);
