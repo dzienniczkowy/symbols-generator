@@ -12,8 +12,8 @@ use Symfony\Component\Console\Helper\Table;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Filesystem\Filesystem;
 use Throwable;
+use Wulkanowy\SymbolsGenerator\Service\Filesystem;
 
 class CheckCommand extends Command
 {
@@ -64,7 +64,7 @@ class CheckCommand extends Command
         ]);
 
         $output->write('Testowanie...');
-        $unchecked = json_decode(file_get_contents($this->tmp . '/unchecked-symbols.json'), true);
+        $unchecked = json_decode($this->filesystem->getContents($this->tmp . '/unchecked-symbols.json'), true);
 
         $start = microtime(true);
         $results = $this->check($unchecked, $output);

@@ -6,6 +6,7 @@ use SimpleXMLElement;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
+use Wulkanowy\SymbolsGenerator\Service\Filesystem;
 use Wulkanowy\SymbolsGenerator\Service\StringFormatterService;
 
 class ParseCommand extends Command
@@ -16,11 +17,15 @@ class ParseCommand extends Command
     /** @var StringFormatterService */
     private $formatter;
 
-    public function __construct(string $tmp, StringFormatterService $formatter)
+    /** @var Filesystem */
+    private $filesystem;
+
+    public function __construct(string $tmp, StringFormatterService $formatter, Filesystem $filesystem)
     {
         parent::__construct();
         $this->tmp = $tmp;
         $this->formatter = $formatter;
+        $this->filesystem = $filesystem;
     }
 
     protected function configure(): void
@@ -35,19 +40,19 @@ class ParseCommand extends Command
         $output->write('Parsowanie...');
         $amount = $this->parse();
         $output->writeln(' zakończone');
-        $output->writeln('Utworzono listę '.$amount.' elementów.');
+        $output->writeln('Utworzono listę ' . $amount . ' elementów.');
 
         return 0;
     }
 
     private function parse(): int
     {
-        $files = glob($this->tmp.'/*.xml');
+        $files = glob($this->tmp . '/*.xml');
 
-        $xml = new SimpleXMLElement(file_get_contents(end($files)));
+        $xml = new SimpleXMLElement($this->filesystem->getContents(end($files)));
         $symbols = [];
         foreach ($xml->catalog->row as $element) {
-            $description = (string) $element->NAZWA_DOD;
+            $description = (string)$element->NAZWA_DOD;
             $name = mb_strtolower($element->NAZWA);
             $path = $this->formatter->set($name)
                 ->latinize()
@@ -57,17 +62,20 @@ class ParseCommand extends Command
                 ->removeSpaces()
                 ->get();
             if ('powiat' === $description) {
-                $symbols['powiat'.$path] = 'Powiat '.$name;
+                $symbols['powiat' . $path] = 'Powiat ' . $name;
             }
             if ('gmina miejska' === $description
                 || 'gmina miejsko-wiejska' === $description
                 || 'gmina wiejska' === $description) {
-                $symbols['gmina'.$path] = 'Gmina '.$this->formatter->set($name)->upper()->get();
+                $symbols['gmina' . $path] = 'Gmina ' . $this->formatter->set($name)->upper()->get();
             }
             $symbols[$path] = $this->formatter->set($name)->upper()->get();
         }
 
-        file_put_contents($this->tmp.'/unchecked-symbols.json', json_encode($symbols, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE));
+        $this->filesystem->dumpFile(
+            $this->tmp . '/unchecked-symbols.json',
+            json_encode($symbols, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE)
+        );
 
         return count($symbols);
     }

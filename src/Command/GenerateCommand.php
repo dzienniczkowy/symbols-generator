@@ -7,6 +7,9 @@ use SimpleXMLElement;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
+use Wulkanowy\SymbolsGenerator\Service\Filesystem;
+use function json_decode;
+use function strlen;
 
 class GenerateCommand extends Command
 {
@@ -16,11 +19,15 @@ class GenerateCommand extends Command
     /** @var string */
     private $tmp;
 
-    public function __construct(string $root, string $tmp)
+    /** @var Filesystem */
+    private $filesystem;
+
+    public function __construct(string $root, string $tmp, Filesystem $filesystem)
     {
         parent::__construct();
         $this->root = $root;
         $this->tmp = $tmp;
+        $this->filesystem = $filesystem;
     }
 
     protected function configure(): void
@@ -42,7 +49,7 @@ class GenerateCommand extends Command
 
     private function generate()
     {
-        $counties = \json_decode(file_get_contents($this->tmp.'/checked-symbols-working.json'));
+        $counties = json_decode($this->filesystem->getContents($this->tmp.'/checked-symbols-working.json'));
 
         $xml = new SimpleXMLElement('<?xml version="1.0" encoding="utf-8"?><resources/>');
         $xml->addAttribute('xmlns:xmlns:tools', 'http://schemas.android.com/tools');
@@ -62,9 +69,11 @@ class GenerateCommand extends Command
         $dom->formatOutput = true;
         $dom->loadXML($xml->asXML());
         $output = preg_replace_callback('/^( +)</m', function ($a) {
-            return str_repeat(' ', (int) (\strlen($a[1]) / 2) * 4).'<';
+            return str_repeat(' ', (int) (strlen($a[1]) / 2) * 4).'<';
         }, $dom->saveXML());
 
-        return file_put_contents($this->root.'/api_symbols.xml', $output);
+        $this->filesystem->dumpFile($this->root.'/api_symbols.xml', $output);
+
+        return 0;
     }
 }

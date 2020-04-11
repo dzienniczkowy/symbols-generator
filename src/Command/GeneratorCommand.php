@@ -24,8 +24,9 @@ class GeneratorCommand extends Command
             ->setDescription('Generate symbols list')
             ->setDefinition(new InputDefinition([
                 new InputArgument('domain', InputArgument::OPTIONAL, 'Register main domain to check', self::BASE_URL),
-                new InputOption('timeout', null, InputArgument::OPTIONAL, 'Timeout', self::TIMEOUT),
-                new InputOption('concurrency', null, InputArgument::OPTIONAL, 'Concurrency', self::CONCURRENCY),
+                new InputOption('timeout', null, InputOption::VALUE_OPTIONAL, 'Timeout', self::TIMEOUT),
+                new InputOption('concurrency', null, InputOption::VALUE_OPTIONAL, 'Concurrency', self::CONCURRENCY),
+                new InputOption('clean', null, InputOption::VALUE_NONE, 'Clean files before work'),
             ]));
     }
 
@@ -38,6 +39,7 @@ class GeneratorCommand extends Command
      */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
+        if ($input->getOption('clean')) $this->getApplication()->find('generate:clean')->run(new ArrayInput([]), $output);
         $this->getApplication()->find('generate:extract')->run(new ArrayInput([]), $output);
         $this->getApplication()->find('generate:parse')->run(new ArrayInput([]), $output);
         $this->getApplication()->find('generate:check')->run(new ArrayInput([
