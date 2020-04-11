@@ -64,7 +64,7 @@ class CheckCommand extends Command
         ]);
 
         $output->write('Testowanie...');
-        $unchecked = json_decode($this->filesystem->getContents($this->tmp . '/unchecked-symbols.json'), true);
+        $unchecked = json_decode($this->filesystem->getContents($this->tmp . '/symbols-unchecked.json'), true);
 
         $start = microtime(true);
         $results = $this->check($unchecked, $output);
@@ -72,15 +72,7 @@ class CheckCommand extends Command
 
         $output->writeln("Testowanie... zakończone.");
 
-        $this->saveResults($results, 'working');
-        $this->saveResults($results, 'adfslight');
-        $this->saveResults($results, 'invalid');
-        $this->saveResults($results, 'end');
-        $this->saveResults($results, 'exception');
-        $this->saveResults($results, 'db');
-        $this->saveResults($results, 'break');
-        $this->saveResults($results, 'unknown');
-
+        $this->saveResults($results);
         $this->showSummary($domain, $output, $unchecked, $results, $totalTime);
 
         return 0;
@@ -162,17 +154,13 @@ class CheckCommand extends Command
         ];
     }
 
-    private function saveResults(array $results, string $type): void
+    private function saveResults(array $results): void
     {
-        if (empty($results[$type])) return;
-
-        usort($results[$type], function ($a, $b) {
-            return $a[1] <=> $b[1];
-        });
+        if (empty($results)) return;
 
         $this->filesystem->dumpFile(
-            $this->tmp . '/checked-symbols-' . $type . '.json',
-            json_encode($results[$type], JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE)
+            $this->tmp . '/symbols-checked.json',
+            json_encode($results, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE)
         );
     }
 

@@ -73,7 +73,7 @@ class ParseCommand extends Command
         }
 
         $this->filesystem->dumpFile(
-            $this->tmp . '/unchecked-symbols.json',
+            $this->tmp . '/symbols-unchecked.json',
             json_encode($symbols, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE)
         );
 
