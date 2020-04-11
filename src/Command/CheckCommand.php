@@ -8,13 +8,17 @@ use GuzzleHttp\Psr7\Request;
 use Psr\Http\Message\ResponseInterface;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Helper\Table;
+use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Filesystem\Filesystem;
+use Throwable;
 
 class CheckCommand extends Command
 {
-    private const BASE_URL = 'https://uonetplus.vulcan.net.pl/';
+    private const BASE_URL = 'vulcan.net.pl';
+    private const TIMEOUT = 25;
+    private const CONCURRENCY = 25;
 
     /** @var string */
     private $root;
@@ -22,25 +26,40 @@ class CheckCommand extends Command
     /** @var Filesystem */
     private $filesystem;
 
+    /** @var Client */
     private $client;
+
+    /** @var int */
+    private $timeout;
+
+    /** @var int */
+    private $concurrency;
 
     public function __construct(string $root, Filesystem $filesystem)
     {
         parent::__construct();
         $this->root = $root;
         $this->filesystem = $filesystem;
-        $this->client = new Client(['base_uri' => self::BASE_URL]);
     }
 
     protected function configure(): void
     {
         $this
             ->setName('generate:check')
-            ->setDescription('Check symbols');
+            ->setDescription('Check symbols')
+            ->addArgument('domain', InputArgument::OPTIONAL, 'Register main domain to check', self::BASE_URL)
+            ->addOption('timeout', null, InputArgument::OPTIONAL, 'Timeout', self::TIMEOUT)
+            ->addOption('concurrency', null, InputArgument::OPTIONAL, 'Timeout', self::CONCURRENCY)
+        ;
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
+        $domain = $input->getArgument("domain");
+        $this->timeout = $input->getOption("timeout");
+        $this->concurrency = $input->getOption("concurrency");
+        $this->client = new Client(['base_uri' => 'https://uonetplus.' . $domain . '/']);
+
         $output->write('Testowanie...');
         $unchecked = json_decode(file_get_contents($this->root . '/tmp/unchecked-symbols.json'), true);
 
@@ -58,7 +77,7 @@ class CheckCommand extends Command
         $this->saveResults($results, 'break');
         $this->saveResults($results, 'unknown');
 
-        $this->showSummary($output, $unchecked, $results, $totalTime);
+        $this->showSummary($domain, $output, $unchecked, $results, $totalTime);
 
         return 0;
     }
@@ -84,37 +103,38 @@ class CheckCommand extends Command
         $o->write(PHP_EOL);
         $s = $o->section();
         $pool = new Pool($this->client, $requests($symbols), [
-            'concurrency' => 25,
+            'concurrency' => $this->concurrency,
+            'options' => ['timeout' => $this->timeout],
             'fulfilled' => function (ResponseInterface $response, $index) use ($s, $symbols, $amount, &$results) {
                 [$value, $prefix] = $this->getPrefixWithSymbol($amount, $symbols, $index);
 
                 if (strpos($response->getBody(), 'Podany identyfikator klienta jest niepoprawny') !== false) {
                     $s->overwrite($prefix . '<fg=red>Nie udało się, bo brak dziennika</>');
-                    $results['invalid'][$index] = $value;
+                    $results['invalid'][] = $value;
                 } elseif (strpos($response->getBody(), 'Zakończono świadczenie usługi dostępu do aplikacji') !== false) {
                     $s->overwrite($prefix . '<fg=red>Nie udało się, bo zakończono świadczenie usługi dostępu do aplikacji</>');
-                    $results['end'][$index] = $value;
+                    $results['end'][] = $value;
                 } elseif (strpos($response->getBody(), 'Wystąpił nieoczekiwany wyjątek') !== false) {
                     $s->overwrite($prefix . '<fg=red>Nie udało się, bo wystąpił nieoczekiwany wyjątek</>');
-                    $results['exception'][$index] = $value;
+                    $results['exception'][] = $value;
                 } elseif (strpos($response->getBody(), 'Przerwa techniczna') !== false) {
                     $s->overwrite($prefix . '<fg=yellow>Przerwa techniczna</>');
-                    $results['working'][$index] = $value;
-                    $results['break'][$index] = $value;
+                    $results['working'][] = $value;
+                    $results['break'][] = $value;
                 } elseif (strpos($response->getBody(), 'Trwa aktualizacja bazy danych') !== false) {
                     $s->overwrite($prefix . '<fg=yellow>Udało się, ale trwa aktualizacja bazy danych</>');
-                    $results['working'][$index] = $value;
-                    $results['db'][$index] = $value;
+                    $results['working'][] = $value;
+                    $results['db'][] = $value;
                 } else {
                     $s->overwrite($prefix . '<fg=green>Udało się!</>');
-                    $results['working'][$index] = $value;
+                    $results['working'][] = $value;
                 }
             },
-            'rejected' => function ($reason, $index) use ($s, $symbols, $amount, &$results) {
+            'rejected' => function (Throwable $reason, $index) use ($s, $symbols, $amount, &$results) {
                 [$value, $prefix] = $this->getPrefixWithSymbol($amount, $symbols, $index);
 
-                $s->overwrite($prefix . '<error>Error Processing Request: '.$reason.'</error>');
-                $results['unknown'][$index] = $value;
+                $s->overwrite($prefix . '<error>Error Processing Request: ' . $reason->getMessage() . '</error>');
+                $results['unknown'][] = $value;
             },
         ]);
         $pool->promise()->wait();
@@ -123,7 +143,8 @@ class CheckCommand extends Command
         return $results;
     }
 
-    private function getPrefixWithSymbol(int $amount, array $symbols, int $index): array {
+    private function getPrefixWithSymbol(int $amount, array $symbols, int $index): array
+    {
         $path = array_keys($symbols)[$index];
 
         return [
@@ -146,10 +167,10 @@ class CheckCommand extends Command
         );
     }
 
-    private function showSummary(OutputInterface $output, array $unchecked, array $results, int $totalTime)
+    private function showSummary(string $domain, OutputInterface $output, array $unchecked, array $results, int $totalTime)
     {
         $table = new Table($output->section());
-        $table->setHeaderTitle("Podsumowanie sprawdzania symboli");
+        $table->setHeaderTitle('Podsumowanie dla `' . $domain . '`');
         $table->setHeaders(['Całkowity czas testowania', $totalTime . ' sec.']);
         $table->addRow(['Wszystkie symbole', count($unchecked)]);
         $table->addRow(['Odnalezione symbole', count($results['working'])]);
