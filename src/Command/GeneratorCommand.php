@@ -27,6 +27,7 @@ class GeneratorCommand extends Command
                 new InputOption('timeout', null, InputOption::VALUE_OPTIONAL, 'Timeout', self::TIMEOUT),
                 new InputOption('concurrency', null, InputOption::VALUE_OPTIONAL, 'Concurrency', self::CONCURRENCY),
                 new InputOption('clean', null, InputOption::VALUE_NONE, 'Clean files before work'),
+                new InputOption('output', 'o', InputOption::VALUE_OPTIONAL, 'Generator output [xml|txt]', 'txt'),
             ]));
     }
 
@@ -48,7 +49,10 @@ class GeneratorCommand extends Command
             '--timeout' => $input->getOption('timeout'),
             '--concurrency' => $input->getOption('concurrency'),
         ]), $output);
-        $this->getApplication()->find('generate:xml')->run(new ArrayInput([]), $output);
+        $this->getApplication()->find('generate:output')->run(new ArrayInput([
+            'command' => 'generate:output',
+            'output' => $input->getOption('output'),
+        ]), $output);
 
         return 0;
     }

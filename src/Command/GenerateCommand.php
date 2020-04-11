@@ -4,6 +4,7 @@ namespace Wulkanowy\SymbolsGenerator\Command;
 
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Wulkanowy\SymbolsGenerator\Service\Filesystem;
 use Wulkanowy\SymbolsGenerator\Service\OutputGeneratorService;
@@ -35,28 +36,40 @@ class GenerateCommand extends Command
     protected function configure(): void
     {
         $this
-            ->setName('generate:xml')
-            ->setDescription('Generate xml file');
+            ->setName('generate:output')
+            ->setDescription('Generate output to file')
+            ->addOption('output', 'o', InputOption::VALUE_OPTIONAL, 'Generator output [xml|txt]', 'txt');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
+        $type = $input->getOption('output');
         $output->write('Generowanie pliku...');
-        $this->generate();
+        $this->generate($type);
         $output->writeln(' zakończone');
-        $output->writeln('<fg=green>Zapisano do pliku api_symbols.xml</>');
+        $output->writeln('<fg=green>Zapisano do pliku output.' . $type . '</>');
 
         return 0;
     }
 
-    private function generate()
+    private function generate(string $type)
     {
         $symbols = json_decode($this->filesystem->getContents($this->tmp . '/symbols-checked.json'))->working;
 
-        $output = $this->output->getAndroidXml($symbols);
+        switch ($type) {
+            case 'txt':
+                $output = $this->output->getText($symbols);
+                break;
 
-        $this->filesystem->dumpFile($this->root . '/api_symbols.xml', $output);
+            case 'xml':
+                $output = $this->output->getAndroidXml($symbols);
+                break;
 
-        return 0;
+            default:
+                echo 'Unsupported output type' . PHP_EOL;
+                return;
+        }
+
+        $this->filesystem->dumpFile($this->root . '/output.' . $type, $output);
     }
 }

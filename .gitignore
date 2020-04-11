@@ -1,7 +1,9 @@
 .idea/
 *.zip
 tmp/
-api_symbols.xml
+
+output.xml
+output.txt
 
 ###> symfony/framework-bundle ###
 /.env

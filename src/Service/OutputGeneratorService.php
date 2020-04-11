@@ -7,6 +7,17 @@ use SimpleXMLElement;
 
 class OutputGeneratorService
 {
+    function getText(array $symbols)
+    {
+        $output = [];
+
+        foreach ($symbols as $item) {
+            $output[] = $item[1];
+        }
+
+        return implode(PHP_EOL, $output);
+    }
+
     function getAndroidXml(array $symbols)
     {
         $xml = new SimpleXMLElement('<?xml version="1.0" encoding="utf-8"?><resources/>');
