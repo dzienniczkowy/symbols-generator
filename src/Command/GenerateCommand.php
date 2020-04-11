@@ -3,6 +3,7 @@
 namespace Wulkanowy\SymbolsGenerator\Command;
 
 use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -38,31 +39,37 @@ class GenerateCommand extends Command
         $this
             ->setName('generate:output')
             ->setDescription('Generate output to file')
-            ->addOption('output', 'o', InputOption::VALUE_OPTIONAL, 'Generator output [xml|txt]', 'txt');
+            ->addArgument('domain', InputArgument::OPTIONAL, 'Register main domain to check', 'vulcan.net.pl')
+            ->addOption('output', null, InputOption::VALUE_OPTIONAL, 'Generator output [txt|html|xml]', 'txt');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $type = $input->getOption('output');
+        $domain = $input->getArgument('domain');
         $output->write('Generowanie pliku...');
-        $this->generate($type);
+        $this->generate($type, $domain);
         $output->writeln(' zakończone');
         $output->writeln('<fg=green>Zapisano do pliku output.' . $type . '</>');
 
         return 0;
     }
 
-    private function generate(string $type)
+    private function generate(string $type, $domain)
     {
-        $symbols = json_decode($this->filesystem->getContents($this->tmp . '/symbols-checked.json'))->working;
+        $symbols = json_decode($this->filesystem->getContents($this->tmp . '/symbols-checked.json'), true);
 
         switch ($type) {
             case 'txt':
-                $output = $this->output->getText($symbols);
+                $output = $this->output->getText($symbols['working']);
+                break;
+
+            case 'html':
+                $output = $this->output->getHtml($symbols, $domain);
                 break;
 
             case 'xml':
-                $output = $this->output->getAndroidXml($symbols);
+                $output = $this->output->getAndroidXml($symbols['working']);
                 break;
 
             default:

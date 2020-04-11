@@ -27,7 +27,7 @@ class GeneratorCommand extends Command
                 new InputOption('timeout', null, InputOption::VALUE_OPTIONAL, 'Timeout', self::TIMEOUT),
                 new InputOption('concurrency', null, InputOption::VALUE_OPTIONAL, 'Concurrency', self::CONCURRENCY),
                 new InputOption('clean', null, InputOption::VALUE_NONE, 'Clean files before work'),
-                new InputOption('output', 'o', InputOption::VALUE_OPTIONAL, 'Generator output [xml|txt]', 'txt'),
+                new InputOption('output', null, InputOption::VALUE_OPTIONAL, 'Generator output [txt|html|xml]', 'txt'),
             ]));
     }
 
@@ -51,7 +51,8 @@ class GeneratorCommand extends Command
         ]), $output);
         $this->getApplication()->find('generate:output')->run(new ArrayInput([
             'command' => 'generate:output',
-            'output' => $input->getOption('output'),
+            'domain' => $input->getArgument('domain'),
+            '--output' => $input->getOption('output'),
         ]), $output);
 
         return 0;

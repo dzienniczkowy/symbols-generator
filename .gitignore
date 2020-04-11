@@ -2,8 +2,9 @@
 *.zip
 tmp/
 
-output.xml
 output.txt
+output.html
+output.xml
 
 ###> symfony/framework-bundle ###
 /.env

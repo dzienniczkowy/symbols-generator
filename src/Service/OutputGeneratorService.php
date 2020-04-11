@@ -3,6 +3,7 @@
 namespace Wulkanowy\SymbolsGenerator\Service;
 
 use DOMDocument;
+use DOMImplementation;
 use SimpleXMLElement;
 
 class OutputGeneratorService
@@ -16,6 +17,54 @@ class OutputGeneratorService
         }
 
         return implode(PHP_EOL, $output);
+    }
+
+    function getHtml(array $symbols, string $domain)
+    {
+        $document = (new DOMImplementation)->createDocument(null, 'html',
+            (new DOMImplementation)->createDocumentType('html'));
+        $document->formatOutput = true;
+
+        $html = $document->documentElement;
+        $head = $document->createElement('head');
+        $title = $document->createElement('title');
+        $body = $document->createElement('body');
+        $h1 = $document->createElement('h1');
+
+        $h1->appendChild($document->createTextNode('Symbole dla domeny ' . $domain));
+        $title->appendChild($document->createTextNode('Symbole dla domeny ' . $domain));
+        $head->appendChild($title);
+        $html->appendChild($head);
+        $body->appendChild($h1);
+
+        foreach ($symbols as $title => $section) {
+            usort($section, function ($a, $b) {
+                return $a[1] <=> $b[1];
+            });
+
+            $details = $document->createElement('details');
+            $summary = $document->createElement('summary');
+            $summaryText = $document->createTextNode($title . ' (' . count($section) . ')');
+            $summary->appendChild($summaryText);
+            $details->appendChild($summary);
+
+            $ul = $document->createElement('ul');
+            foreach ($section as $item) {
+                $link = $document->createElement('a');
+                $link->setAttribute('href', 'https://uonetplus.' . $domain . '/' . $item[1]);
+                $link->appendChild($document->createTextNode($item[0]));
+
+                $li = $document->createElement('li');
+                $li->appendChild($link);
+
+                $ul->appendChild($li);
+            }
+            $details->appendChild($ul);
+            $body->appendChild($details);
+        }
+        $html->appendChild($body);
+
+        return $document->saveHTML();
     }
 
     function getAndroidXml(array $symbols)
