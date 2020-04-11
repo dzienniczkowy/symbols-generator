@@ -172,7 +172,7 @@ class CheckCommand extends Command
 
         $this->filesystem->dumpFile(
             $this->root . '/tmp/checked-symbols-' . $type . '.json',
-            json_encode($results[$type], JSON_PRETTY_PRINT)
+            json_encode($results[$type], JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE)
         );
     }
 

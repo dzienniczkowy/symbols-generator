@@ -67,7 +67,7 @@ class ParseCommand extends Command
             $symbols[$path] = $this->formatter->set($name)->upper()->get();
         }
 
-        file_put_contents($this->root.'/tmp/unchecked-symbols.json', json_encode($symbols, JSON_PRETTY_PRINT));
+        file_put_contents($this->root.'/tmp/unchecked-symbols.json', json_encode($symbols, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE));
 
         return count($symbols);
     }
