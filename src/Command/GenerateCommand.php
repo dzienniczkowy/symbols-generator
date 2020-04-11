@@ -38,7 +38,7 @@ class GenerateCommand extends Command
 
     private function generate()
     {
-        $counties = \json_decode(file_get_contents($this->root.'/tmp/checked-symbols.json'));
+        $counties = \json_decode(file_get_contents($this->root.'/tmp/checked-symbols-working.json'));
 
         $xml = new SimpleXMLElement('<?xml version="1.0" encoding="utf-8"?><resources/>');
         $xml->addAttribute('xmlns:xmlns:tools', 'http://schemas.android.com/tools');
