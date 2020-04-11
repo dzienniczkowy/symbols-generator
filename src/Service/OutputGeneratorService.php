@@ -8,7 +8,7 @@ use SimpleXMLElement;
 
 class OutputGeneratorService
 {
-    function getText(array $symbols)
+    public function getText(array $symbols)
     {
         $output = [];
 
@@ -23,10 +23,13 @@ class OutputGeneratorService
         return implode(PHP_EOL, $output);
     }
 
-    function getHtml(array $symbols, string $domain)
+    public function getHtml(array $symbols, string $domain)
     {
-        $document = (new DOMImplementation)->createDocument(null, 'html',
-            (new DOMImplementation)->createDocumentType('html'));
+        $document = (new DOMImplementation())->createDocument(
+            null,
+            'html',
+            (new DOMImplementation())->createDocumentType('html')
+        );
         $document->formatOutput = true;
 
         $html = $document->documentElement;
@@ -35,8 +38,8 @@ class OutputGeneratorService
         $body = $document->createElement('body');
         $h1 = $document->createElement('h1');
 
-        $h1->appendChild($document->createTextNode('Symbole dla domeny ' . $domain));
-        $title->appendChild($document->createTextNode('Symbole dla domeny ' . $domain));
+        $h1->appendChild($document->createTextNode('Symbole dla domeny '.$domain));
+        $title->appendChild($document->createTextNode('Symbole dla domeny '.$domain));
         $head->appendChild($title);
         $html->appendChild($head);
         $body->appendChild($h1);
@@ -48,14 +51,14 @@ class OutputGeneratorService
 
             $details = $document->createElement('details');
             $summary = $document->createElement('summary');
-            $summaryText = $document->createTextNode($title . ' (' . count($section) . ')');
+            $summaryText = $document->createTextNode($title.' ('.count($section).')');
             $summary->appendChild($summaryText);
             $details->appendChild($summary);
 
             $ul = $document->createElement('ul');
             foreach ($section as $item) {
                 $link = $document->createElement('a');
-                $link->setAttribute('href', 'https://uonetplus.' . $domain . '/' . $item[1]);
+                $link->setAttribute('href', 'https://uonetplus.'.$domain.'/'.$item[1]);
                 $link->appendChild($document->createTextNode($item[0]));
 
                 $li = $document->createElement('li');
@@ -71,7 +74,7 @@ class OutputGeneratorService
         return $document->saveHTML();
     }
 
-    function getAndroidXml(array $symbols)
+    public function getAndroidXml(array $symbols)
     {
         usort($symbols, function ($a, $b) {
             return $a[1] <=> $b[1];
@@ -96,7 +99,7 @@ class OutputGeneratorService
         $dom->loadXML($xml->asXML());
 
         return preg_replace_callback('/^( +)</m', function ($a) {
-            return str_repeat(' ', (int)(strlen($a[1]) / 2) * 4) . '<';
+            return str_repeat(' ', (int) (strlen($a[1]) / 2) * 4).'<';
         }, $dom->saveXML());
     }
 }

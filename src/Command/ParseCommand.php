@@ -40,19 +40,19 @@ class ParseCommand extends Command
         $output->write('Parsowanie...');
         $amount = $this->parse();
         $output->writeln(' zakończone');
-        $output->writeln('Utworzono listę ' . $amount . ' elementów.');
+        $output->writeln('Utworzono listę '.$amount.' elementów.');
 
         return 0;
     }
 
     private function parse(): int
     {
-        $files = glob($this->tmp . '/*.xml');
+        $files = glob($this->tmp.'/*.xml');
 
         $xml = new SimpleXMLElement($this->filesystem->getContents(end($files)));
         $symbols = [];
         foreach ($xml->catalog->row as $element) {
-            $description = (string)$element->NAZWA_DOD;
+            $description = (string) $element->NAZWA_DOD;
             $name = mb_strtolower($element->NAZWA);
             $path = $this->formatter->set($name)
                 ->latinize()
@@ -62,18 +62,18 @@ class ParseCommand extends Command
                 ->removeSpaces()
                 ->get();
             if ('powiat' === $description) {
-                $symbols['powiat' . $path] = 'Powiat ' . $name;
+                $symbols['powiat'.$path] = 'Powiat '.$name;
             }
             if ('gmina miejska' === $description
                 || 'gmina miejsko-wiejska' === $description
                 || 'gmina wiejska' === $description) {
-                $symbols['gmina' . $path] = 'Gmina ' . $this->formatter->set($name)->upper()->get();
+                $symbols['gmina'.$path] = 'Gmina '.$this->formatter->set($name)->upper()->get();
             }
             $symbols[$path] = $this->formatter->set($name)->upper()->get();
         }
 
         $this->filesystem->dumpFile(
-            $this->tmp . '/symbols-unchecked.json',
+            $this->tmp.'/symbols-unchecked.json',
             json_encode($symbols, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE)
         );
 

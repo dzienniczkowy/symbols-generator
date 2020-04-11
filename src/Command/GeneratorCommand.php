@@ -32,26 +32,29 @@ class GeneratorCommand extends Command
     }
 
     /**
-     * @param InputInterface $input
+     * @param InputInterface  $input
      * @param OutputInterface $output
      *
-     * @return int
      * @throws Exception
+     *
+     * @return int
      */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        if ($input->getOption('clean')) $this->getApplication()->find('generate:clean')->run(new ArrayInput([]), $output);
+        if ($input->getOption('clean')) {
+            $this->getApplication()->find('generate:clean')->run(new ArrayInput([]), $output);
+        }
         $this->getApplication()->find('generate:extract')->run(new ArrayInput([]), $output);
         $this->getApplication()->find('generate:parse')->run(new ArrayInput([]), $output);
         $this->getApplication()->find('generate:check')->run(new ArrayInput([
-            'command' => 'generate:check',
-            'domain' => $input->getArgument('domain'),
-            '--timeout' => $input->getOption('timeout'),
+            'command'       => 'generate:check',
+            'domain'        => $input->getArgument('domain'),
+            '--timeout'     => $input->getOption('timeout'),
             '--concurrency' => $input->getOption('concurrency'),
         ]), $output);
         $this->getApplication()->find('generate:output')->run(new ArrayInput([
-            'command' => 'generate:output',
-            'domain' => $input->getArgument('domain'),
+            'command'  => 'generate:output',
+            'domain'   => $input->getArgument('domain'),
             '--output' => $input->getOption('output'),
         ]), $output);
 

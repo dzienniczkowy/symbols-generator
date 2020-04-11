@@ -31,9 +31,9 @@ class CleanCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $output->write("Czyszczenie... ");
+        $output->write('Czyszczenie... ');
         $this->filesystem->remove($this->tmp);
-        $output->writeln(" zakończone.");
+        $output->writeln(' zakończone.');
 
         return 0;
     }

@@ -1,6 +1,7 @@
 <?php
 
 namespace Wulkanowy\SymbolsGenerator\Service;
+
 use Symfony\Component\Filesystem\Exception\IOException;
 use Symfony\Component\Filesystem\Filesystem as SymfonyFilesystem;
 

@@ -55,22 +55,22 @@ class CheckCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $domain = $input->getArgument("domain");
-        $this->timeout = $input->getOption("timeout");
-        $this->concurrency = $input->getOption("concurrency");
+        $domain = $input->getArgument('domain');
+        $this->timeout = $input->getOption('timeout');
+        $this->concurrency = $input->getOption('concurrency');
         $this->client = new Client([
-            'base_uri' => 'https://uonetplus.' . $domain . '/',
-            'allow_redirects' => ['track_redirects' => true]
+            'base_uri'        => 'https://uonetplus.'.$domain.'/',
+            'allow_redirects' => ['track_redirects' => true],
         ]);
 
         $output->write('Testowanie...');
-        $unchecked = json_decode($this->filesystem->getContents($this->tmp . '/symbols-unchecked.json'), true);
+        $unchecked = json_decode($this->filesystem->getContents($this->tmp.'/symbols-unchecked.json'), true);
 
         $start = microtime(true);
         $results = $this->check($unchecked, $output);
         $totalTime = round(microtime(true) - $start, 2);
 
-        $output->writeln("Testowanie... zakończone.");
+        $output->writeln('Testowanie... zakończone.');
 
         $this->saveResults($results);
         $this->showSummary($domain, $output, $unchecked, $results, $totalTime);
@@ -81,14 +81,14 @@ class CheckCommand extends Command
     private function check(array $symbols, OutputInterface $o): array
     {
         $results = [
-            'working' => [],
+            'working'   => [],
             'adfslight' => [],
-            'invalid' => [],
-            'end' => [],
+            'invalid'   => [],
+            'end'       => [],
             'exception' => [],
-            'db' => [],
-            'break' => [],
-            'unknown' => []
+            'db'        => [],
+            'break'     => [],
+            'unknown'   => [],
         ];
         $requests = function ($items) {
             foreach ($items as $key => $value) {
@@ -101,40 +101,40 @@ class CheckCommand extends Command
         $s = $o->section();
         $pool = new Pool($this->client, $requests($symbols), [
             'concurrency' => $this->concurrency,
-            'options' => ['timeout' => $this->timeout],
-            'fulfilled' => function (ResponseInterface $response, $index) use ($s, $symbols, $amount, &$results) {
+            'options'     => ['timeout' => $this->timeout],
+            'fulfilled'   => function (ResponseInterface $response, $index) use ($s, $symbols, $amount, &$results) {
                 $effectiveUrl = $response->getHeader(RedirectMiddleware::HISTORY_HEADER);
                 [$value, $prefix] = $this->getPrefixWithSymbol($amount, $symbols, $index);
 
                 if (strpos($response->getBody(), 'Podany identyfikator klienta jest niepoprawny') !== false) {
-                    $s->overwrite($prefix . '<fg=red>Nie udało się, bo brak dziennika</>');
+                    $s->overwrite($prefix.'<fg=red>Nie udało się, bo brak dziennika</>');
                     $results['invalid'][] = $value;
                 } elseif (strpos($response->getBody(), 'Zakończono świadczenie usługi dostępu do aplikacji') !== false) {
-                    $s->overwrite($prefix . '<fg=red>Nie udało się, bo zakończono świadczenie usługi dostępu do aplikacji</>');
+                    $s->overwrite($prefix.'<fg=red>Nie udało się, bo zakończono świadczenie usługi dostępu do aplikacji</>');
                     $results['end'][] = $value;
                 } elseif (strpos($response->getBody(), 'Wystąpił nieoczekiwany wyjątek') !== false) {
-                    $s->overwrite($prefix . '<fg=red>Nie udało się, bo wystąpił nieoczekiwany wyjątek</>');
+                    $s->overwrite($prefix.'<fg=red>Nie udało się, bo wystąpił nieoczekiwany wyjątek</>');
                     $results['exception'][] = $value;
                 } elseif (strpos($response->getBody(), 'Przerwa techniczna') !== false) {
-                    $s->overwrite($prefix . '<fg=yellow>Przerwa techniczna</>');
+                    $s->overwrite($prefix.'<fg=yellow>Przerwa techniczna</>');
                     $results['working'][] = $value;
                     $results['break'][] = $value;
                 } elseif (strpos($response->getBody(), 'Trwa aktualizacja bazy danych') !== false) {
-                    $s->overwrite($prefix . '<fg=yellow>Udało się, ale trwa aktualizacja bazy danych</>');
+                    $s->overwrite($prefix.'<fg=yellow>Udało się, ale trwa aktualizacja bazy danych</>');
                     $results['working'][] = $value;
                     $results['db'][] = $value;
                 } else {
                     if (strpos(end($effectiveUrl), 'adfslight') !== false) {
                         $results['adfslight'][] = $value;
                     }
-                    $s->overwrite($prefix . '<fg=green>Udało się!</>');
+                    $s->overwrite($prefix.'<fg=green>Udało się!</>');
                     $results['working'][] = $value;
                 }
             },
             'rejected' => function (Throwable $reason, $index) use ($s, $symbols, $amount, &$results) {
                 [$value, $prefix] = $this->getPrefixWithSymbol($amount, $symbols, $index);
 
-                $s->overwrite($prefix . '<error>Error Processing Request: ' . $reason->getMessage() . '</error>');
+                $s->overwrite($prefix.'<error>Error Processing Request: '.$reason->getMessage().'</error>');
                 $results['unknown'][] = $value;
             },
         ]);
@@ -150,16 +150,18 @@ class CheckCommand extends Command
 
         return [
             [$symbols[$path], $path],
-            '[' . ($index + 1) . '/' . $amount . '] ' . $path . ' – '
+            '['.($index + 1).'/'.$amount.'] '.$path.' – ',
         ];
     }
 
     private function saveResults(array $results): void
     {
-        if (empty($results)) return;
+        if (empty($results)) {
+            return;
+        }
 
         $this->filesystem->dumpFile(
-            $this->tmp . '/symbols-checked.json',
+            $this->tmp.'/symbols-checked.json',
             json_encode($results, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE)
         );
     }
@@ -167,8 +169,8 @@ class CheckCommand extends Command
     private function showSummary(string $domain, OutputInterface $output, array $unchecked, array $results, int $totalTime)
     {
         $table = new Table($output->section());
-        $table->setHeaderTitle('Podsumowanie dla `' . $domain . '`');
-        $table->setHeaders(['Całkowity czas testowania', $totalTime . ' sec.']);
+        $table->setHeaderTitle('Podsumowanie dla `'.$domain.'`');
+        $table->setHeaders(['Całkowity czas testowania', $totalTime.' sec.']);
         $table->addRow(['Wszystkie symbole', count($unchecked)]);
         $table->addRow(['Odnalezione symbole', count($results['working'])]);
         $table->addRow(['Odnalezione symbole (tylko adfslight)', count($results['adfslight'])]);
