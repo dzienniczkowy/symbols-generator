@@ -32,6 +32,8 @@ class GenerateCommand extends Command
         $this->generate();
         $output->writeln(' zakończone');
         $output->writeln('<fg=green>Zapisano do pliku api_symbols.xml</>');
+
+        return 0;
     }
 
     private function generate()

@@ -39,6 +39,8 @@ class CheckCommand extends Command
         $amount = $this->check($unchecked, $output);
         $output->writeln('Testowanie zakończone w '.round(microtime(true) - $start, 2).' sekund(y).');
         $output->writeln('Odnaleziono '.$amount.' z '.count($unchecked));
+
+        return 0;
     }
 
     private function check(array $symbols, OutputInterface $o): int

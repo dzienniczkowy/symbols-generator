@@ -36,6 +36,8 @@ class ParseCommand extends Command
         $amount = $this->parse();
         $output->writeln(' zakończone');
         $output->writeln('Utworzono listę '.$amount.' elementów.');
+
+        return 0;
     }
 
     private function parse(): int

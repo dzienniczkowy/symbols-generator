@@ -30,5 +30,7 @@ class GeneratorCommand extends Command
         $this->getApplication()->find('generate:parse')->run(new ArrayInput([]), $output);
         $this->getApplication()->find('generate:check')->run(new ArrayInput([]), $output);
         $this->getApplication()->find('generate:xml')->run(new ArrayInput([]), $output);
+
+        return 0;
     }
 }

@@ -41,6 +41,8 @@ class ExtractCommand extends Command
         $output->write('Rozpakowywanie...');
         $this->extract();
         $output->writeln(' zakończone');
+
+        return 0;
     }
 
     public function extract()
