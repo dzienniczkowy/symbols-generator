@@ -12,6 +12,10 @@ class OutputGeneratorService
     {
         $output = [];
 
+        usort($symbols, function ($a, $b) {
+            return $a[1] <=> $b[1];
+        });
+
         foreach ($symbols as $item) {
             $output[] = $item[1];
         }
@@ -69,6 +73,10 @@ class OutputGeneratorService
 
     function getAndroidXml(array $symbols)
     {
+        usort($symbols, function ($a, $b) {
+            return $a[1] <=> $b[1];
+        });
+
         $xml = new SimpleXMLElement('<?xml version="1.0" encoding="utf-8"?><resources/>');
         $xml->addAttribute('xmlns:xmlns:tools', 'http://schemas.android.com/tools');
         $xml->addAttribute('android:tools:ignore', 'MissingTranslation,Typos');
