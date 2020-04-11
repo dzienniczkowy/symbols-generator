@@ -52,6 +52,13 @@ class StringFormatterService
         return $this;
     }
 
+    public function removeBrackets()
+    {
+        $this->string = str_replace(['(', ')'], '', $this->string);
+
+        return $this;
+    }
+
     public function lowercase()
     {
         $this->string = strtolower($this->string);

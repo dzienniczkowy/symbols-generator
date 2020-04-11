@@ -53,6 +53,7 @@ class ParseCommand extends Command
                 ->latinize()
                 ->lowercase()
                 ->removeDashes()
+                ->removeBrackets()
                 ->removeSpaces()
                 ->get();
             if ('powiat' === $description) {
