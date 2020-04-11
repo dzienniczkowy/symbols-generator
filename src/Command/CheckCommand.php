@@ -64,6 +64,8 @@ class CheckCommand extends Command
                     $o->writeln('<fg=red>Nie udało się, bo brak dziennika</>');
                 } elseif (strpos($response->getBody(), 'Zakończono świadczenie usługi dostępu do aplikacji') !== false) {
                     $o->writeln('<fg=red>Nie udało się, bo zakończono świadczenie usługi dostępu do aplikacji</>');
+                } elseif (strpos($response->getBody(), 'Wystąpił nieoczekiwany wyjątek') !== false) {
+                    $o->writeln('<fg=red>Nie udało się, bo wystąpił nieoczekiwany wyjątek</>');
                 } elseif (strpos($response->getBody(), 'Przerwa techniczna') !== false) {
                     $o->writeln('<fg=yellow>Przerwa techniczna</>');
                     $filtered[$index] = $value;
