@@ -166,7 +166,7 @@ class CheckCommand extends Command
         );
     }
 
-    private function showSummary(string $domain, OutputInterface $output, array $unchecked, array $results, int $totalTime)
+    private function showSummary(string $domain, OutputInterface $output, array $unchecked, array $results, float $totalTime)
     {
         $table = new Table($output->section());
         $table->setHeaderTitle('Podsumowanie dla `'.$domain.'`');
