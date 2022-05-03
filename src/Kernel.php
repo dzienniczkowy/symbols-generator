@@ -2,7 +2,6 @@
 
 namespace Wulkanowy\SymbolsGenerator;
 
-
 use Symfony\Bundle\FrameworkBundle\Kernel\MicroKernelTrait;
 use Symfony\Component\HttpKernel\Kernel as BaseKernel;
 
