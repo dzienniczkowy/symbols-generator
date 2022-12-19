@@ -50,7 +50,7 @@ class ParseCommand extends Command
         try {
             $xml = new SimpleXMLElement($this->filesystem->getContents(end($files)));
         } catch (Exception $e) {
-            die($e);
+            exit($e);
         }
         $symbols = [];
         foreach ($xml->catalog->row as $element) {

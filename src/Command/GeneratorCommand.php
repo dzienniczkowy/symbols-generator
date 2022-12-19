@@ -36,8 +36,9 @@ class GeneratorCommand extends Command
      * @param InputInterface  $input
      * @param OutputInterface $output
      *
-     * @return int
      * @throws Exception|ExceptionInterface
+     *
+     * @return int
      */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {

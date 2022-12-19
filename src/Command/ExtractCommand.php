@@ -9,7 +9,6 @@ use ZipArchive;
 
 class ExtractCommand extends Command
 {
-
     private ZipArchive $zip;
 
     private string $root;
