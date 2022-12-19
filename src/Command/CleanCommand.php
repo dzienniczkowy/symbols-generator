@@ -11,11 +11,9 @@ class CleanCommand extends Command
 {
     protected static $defaultName = 'generate:clean';
 
-    /** @var string */
-    private $tmp;
+    private string $tmp;
 
-    /** @var Filesystem */
-    private $filesystem;
+    private Filesystem $filesystem;
 
     public function __construct(string $tmp, Filesystem $filesystem)
     {

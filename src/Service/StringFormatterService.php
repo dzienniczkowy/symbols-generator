@@ -4,9 +4,9 @@ namespace Wulkanowy\SymbolsGenerator\Service;
 
 class StringFormatterService
 {
-    private $string;
+    private string $string;
 
-    public function set(string $string)
+    public function set(string $string): static
     {
         $this->string = $string;
 
@@ -18,7 +18,7 @@ class StringFormatterService
      *
      * @link https://www.forum.optymalizacja.com/topic/41153-phpusuwaniezamienianie-polskich-znak%C3%B3w?do=findComment&comment=353305
      */
-    public function latinize()
+    public function latinize(): static
     {
         $tab = [
             //WIN
@@ -34,46 +34,44 @@ class StringFormatterService
             "\xc5\xbc" => 'z', "\xc5\xbb" => 'Z', "\xc5\xba" => 'z', "\xc5\xb9" => 'Z',
             "\xc5\x84" => 'n', "\xc5\x83" => 'N',
             //ISO
-            "\xb1" => 'a', "\xa1" => 'A', "\xe6" => 'c', "\xc6" => 'C',
-            "\xea" => 'e', "\xca" => 'E', "\xb3" => 'l', "\xa3" => 'L',
-            "\xf3" => 'o', "\xd3" => 'O', "\xb6" => 's', "\xa6" => 'S',
-            "\xbc" => 'z', "\xac" => 'Z', "\xbf" => 'z', "\xaf" => 'Z',
-            "\xf1" => 'n', "\xd1" => 'N',
+            "\xb1" => 'a', "\xa1" => 'A',
+            "\xb6" => 's', "\xa6" => 'S',
+            "\xbc" => 'z',
         ];
         $this->string = strtr($this->string, $tab);
 
         return $this;
     }
 
-    public function removeSpaces()
+    public function removeSpaces(): static
     {
         $this->string = str_replace(' ', '', $this->string);
 
         return $this;
     }
 
-    public function removeBrackets()
+    public function removeBrackets(): static
     {
         $this->string = str_replace(['(', ')'], '', $this->string);
 
         return $this;
     }
 
-    public function lowercase()
+    public function lowercase(): static
     {
         $this->string = strtolower($this->string);
 
         return $this;
     }
 
-    public function removeDashes()
+    public function removeDashes(): static
     {
         $this->string = str_replace('-', '', $this->string);
 
         return $this;
     }
 
-    public function upper()
+    public function upper(): static
     {
         $this->string = mb_convert_case(
             mb_strtolower($this->string),

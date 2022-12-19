@@ -3,12 +3,13 @@
 namespace Wulkanowy\SymbolsGenerator\Service;
 
 use DOMDocument;
+use DOMException;
 use DOMImplementation;
 use SimpleXMLElement;
 
 class OutputGeneratorService
 {
-    public function getText(array $symbols)
+    public function getText(array $symbols): string
     {
         $output = [];
 
@@ -23,7 +24,10 @@ class OutputGeneratorService
         return implode(PHP_EOL, $output);
     }
 
-    public function getHtml(array $symbols, string $domain)
+    /**
+     * @throws DOMException
+     */
+    public function getHtml(array $symbols, string $domain): bool|string
     {
         $document = (new DOMImplementation())->createDocument(
             null,
@@ -74,7 +78,7 @@ class OutputGeneratorService
         return $document->saveHTML();
     }
 
-    public function getAndroidXml(array $symbols)
+    public function getAndroidXml(array $symbols): array|string|null
     {
         usort($symbols, function ($a, $b) {
             return $a[1] <=> $b[1];

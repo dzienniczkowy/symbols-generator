@@ -19,7 +19,7 @@ framework:
         # is used to compute stable namespaces for cache keys.
         #prefix_seed: your_vendor_name/app_name
 
-        # The app cache caches to the filesystem by default.
+        # The app cache to the filesystem by default.
         # Other options include:
 
         # Redis

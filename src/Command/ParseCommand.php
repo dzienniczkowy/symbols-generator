@@ -2,6 +2,7 @@
 
 namespace Wulkanowy\SymbolsGenerator\Command;
 
+use Exception;
 use SimpleXMLElement;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
@@ -11,14 +12,11 @@ use Wulkanowy\SymbolsGenerator\Service\StringFormatterService;
 
 class ParseCommand extends Command
 {
-    /** @var string */
-    private $tmp;
+    private string $tmp;
 
-    /** @var StringFormatterService */
-    private $formatter;
+    private StringFormatterService $formatter;
 
-    /** @var Filesystem */
-    private $filesystem;
+    private Filesystem $filesystem;
 
     public function __construct(string $tmp, StringFormatterService $formatter, Filesystem $filesystem)
     {
@@ -35,7 +33,7 @@ class ParseCommand extends Command
             ->setDescription('Parse list');
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $output->write('Parsowanie...');
         $amount = $this->parse();
@@ -49,7 +47,11 @@ class ParseCommand extends Command
     {
         $files = glob($this->tmp.'/*.xml');
 
-        $xml = new SimpleXMLElement($this->filesystem->getContents(end($files)));
+        try {
+            $xml = new SimpleXMLElement($this->filesystem->getContents(end($files)));
+        } catch (Exception $e) {
+            die($e);
+        }
         $symbols = [];
         foreach ($xml->catalog->row as $element) {
             $description = (string) $element->NAZWA_DOD;

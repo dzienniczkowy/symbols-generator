@@ -11,6 +11,7 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Helper\Table;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Output\ConsoleOutputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Throwable;
 use Wulkanowy\SymbolsGenerator\Service\Filesystem;
@@ -21,20 +22,15 @@ class CheckCommand extends Command
     private const TIMEOUT = 25;
     private const CONCURRENCY = 25;
 
-    /** @var string */
-    private $tmp;
+    private string $tmp;
 
-    /** @var Filesystem */
-    private $filesystem;
+    private Filesystem $filesystem;
 
-    /** @var Client */
-    private $client;
+    private Client $client;
 
-    /** @var int */
-    private $timeout;
+    private int $timeout;
 
-    /** @var int */
-    private $concurrency;
+    private int $concurrency;
 
     public function __construct(string $tmp, Filesystem $filesystem)
     {
@@ -53,7 +49,7 @@ class CheckCommand extends Command
             ->addOption('concurrency', null, InputArgument::OPTIONAL, 'Timeout', self::CONCURRENCY);
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface|ConsoleOutputInterface $output): int
     {
         $domain = $input->getArgument('domain');
         $this->timeout = $input->getOption('timeout');
@@ -78,7 +74,7 @@ class CheckCommand extends Command
         return 0;
     }
 
-    private function check(array $symbols, OutputInterface $o): array
+    private function check(array $symbols, ConsoleOutputInterface $o): array
     {
         $results = [
             'working'   => [],
@@ -106,25 +102,25 @@ class CheckCommand extends Command
                 $effectiveUrl = $response->getHeader(RedirectMiddleware::HISTORY_HEADER);
                 [$value, $prefix] = $this->getPrefixWithSymbol($amount, $symbols, $index);
 
-                if (strpos($response->getBody(), 'Podany identyfikator klienta jest niepoprawny') !== false) {
+                if (str_contains($response->getBody(), 'Podany identyfikator klienta jest niepoprawny')) {
                     $s->overwrite($prefix.'<fg=red>Nie udało się, bo brak dziennika</>');
                     $results['invalid'][] = $value;
-                } elseif (strpos($response->getBody(), 'Zakończono świadczenie usługi dostępu do aplikacji') !== false) {
+                } elseif (str_contains($response->getBody(), 'Zakończono świadczenie usługi dostępu do aplikacji')) {
                     $s->overwrite($prefix.'<fg=red>Nie udało się, bo zakończono świadczenie usługi dostępu do aplikacji</>');
                     $results['end'][] = $value;
-                } elseif (strpos($response->getBody(), 'Wystąpił nieoczekiwany wyjątek') !== false) {
+                } elseif (str_contains($response->getBody(), 'Wystąpił nieoczekiwany wyjątek')) {
                     $s->overwrite($prefix.'<fg=red>Nie udało się, bo wystąpił nieoczekiwany wyjątek</>');
                     $results['exception'][] = $value;
-                } elseif (strpos($response->getBody(), 'Przerwa techniczna') !== false) {
+                } elseif (str_contains($response->getBody(), 'Przerwa techniczna')) {
                     $s->overwrite($prefix.'<fg=yellow>Przerwa techniczna</>');
                     $results['working'][] = $value;
                     $results['break'][] = $value;
-                } elseif (strpos($response->getBody(), 'Trwa aktualizacja bazy danych') !== false) {
+                } elseif (str_contains($response->getBody(), 'Trwa aktualizacja bazy danych')) {
                     $s->overwrite($prefix.'<fg=yellow>Udało się, ale trwa aktualizacja bazy danych</>');
                     $results['working'][] = $value;
                     $results['db'][] = $value;
                 } else {
-                    if (strpos(end($effectiveUrl), 'adfslight') !== false) {
+                    if (str_contains(end($effectiveUrl), 'adfslight')) {
                         $results['adfslight'][] = $value;
                     }
                     $s->overwrite($prefix.'<fg=green>Udało się!</>');
@@ -166,7 +162,7 @@ class CheckCommand extends Command
         );
     }
 
-    private function showSummary(string $domain, OutputInterface $output, array $unchecked, array $results, float $totalTime)
+    private function showSummary(string $domain, ConsoleOutputInterface $output, array $unchecked, array $results, float $totalTime)
     {
         $table = new Table($output->section());
         $table->setHeaderTitle('Podsumowanie dla `'.$domain.'`');

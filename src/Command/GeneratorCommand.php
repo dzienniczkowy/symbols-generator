@@ -4,6 +4,7 @@ namespace Wulkanowy\SymbolsGenerator\Command;
 
 use Exception;
 use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Exception\ExceptionInterface;
 use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputDefinition;
@@ -35,9 +36,8 @@ class GeneratorCommand extends Command
      * @param InputInterface  $input
      * @param OutputInterface $output
      *
-     * @throws Exception
-     *
      * @return int
+     * @throws Exception|ExceptionInterface
      */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {

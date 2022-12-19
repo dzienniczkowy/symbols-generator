@@ -5,31 +5,22 @@ namespace Wulkanowy\SymbolsGenerator\Command;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Filesystem\Filesystem;
 use ZipArchive;
 
 class ExtractCommand extends Command
 {
-    /**
-     * @var Filesystem
-     */
-    private $filesystem;
 
-    /** @var ZipArchive */
-    private $zip;
+    private ZipArchive $zip;
 
-    /** @var string */
-    private $root;
+    private string $root;
 
-    /** @var string */
-    private $tmp;
+    private string $tmp;
 
     public function __construct(string $root, string $tmp)
     {
         parent::__construct();
         $this->root = $root;
         $this->tmp = $tmp;
-        $this->filesystem = new Filesystem();
         $this->zip = new ZipArchive();
     }
 
@@ -40,7 +31,7 @@ class ExtractCommand extends Command
             ->setDescription('Extract archive');
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $output->write('Rozpakowywanie...');
         $this->extract();

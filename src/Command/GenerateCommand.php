@@ -13,17 +13,13 @@ use Wulkanowy\SymbolsGenerator\Service\OutputGeneratorService;
 
 class GenerateCommand extends Command
 {
-    /** @var string */
-    private $root;
+    private string $root;
 
-    /** @var string */
-    private $tmp;
+    private string $tmp;
 
-    /** @var OutputGeneratorService */
-    private $output;
+    private OutputGeneratorService $output;
 
-    /** @var Filesystem */
-    private $filesystem;
+    private Filesystem $filesystem;
 
     public function __construct(string $root, string $tmp, OutputGeneratorService $output, Filesystem $filesystem)
     {
@@ -43,7 +39,7 @@ class GenerateCommand extends Command
             ->addOption('output', null, InputOption::VALUE_OPTIONAL, 'Generator output [txt|html|xml]', 'txt');
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $type = $input->getOption('output');
         $domain = $input->getArgument('domain');
