@@ -54,7 +54,7 @@ class ParseCommand extends Command
         }
         $symbols = [];
         foreach ($xml->catalog->row as $element) {
-            $description = (string) $element->NAZWA_DOD;
+            $description = (string)$element->NAZWA_DOD;
 
             if ('podregion' === $description) continue;
             if ('region' === $description) continue;
@@ -75,8 +75,15 @@ class ParseCommand extends Command
             }
             if ('gmina miejska' === $description
                 || 'gmina miejsko-wiejska' === $description
-                || 'gmina wiejska' === $description) {
+                || 'gmina wiejska' === $description
+            ) {
                 $symbols['gmina'.$path] = 'Gmina '.$this->formatter->set($name)->upper()->get();
+            }
+            if ('miasto na prawach powiatu' === $description
+                || 'gmina miejska' === $description
+                || 'gmina wiejska' === $description
+            ) {
+                $symbols[$path.'projekt'] = $this->formatter->set($name)->upper()->get().'projekt';
             }
             $symbols[$path] = $this->formatter->set($name)->upper()->get();
         }
