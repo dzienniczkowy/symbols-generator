@@ -55,6 +55,13 @@ class ParseCommand extends Command
         $symbols = [];
         foreach ($xml->catalog->row as $element) {
             $description = (string) $element->NAZWA_DOD;
+
+            if ('podregion' === $description) continue;
+            if ('region' === $description) continue;
+            if ('obszar wiejski' === $description) continue;
+            if ('delegatura' === $description) continue;
+            if ('dzielnica' === $description) continue;
+
             $name = mb_strtolower($element->NAZWA);
             $path = $this->formatter->set($name)
                 ->latinize()
