@@ -56,11 +56,14 @@ class ParseCommand extends Command
         foreach ($xml->catalog->row as $element) {
             $description = (string)$element->NAZWA_DOD;
 
-            if ('podregion' === $description) continue;
-            if ('region' === $description) continue;
-            if ('obszar wiejski' === $description) continue;
-            if ('delegatura' === $description) continue;
-            if ('dzielnica' === $description) continue;
+            if ('podregion' === $description
+                || 'region' === $description
+                || 'obszar wiejski' === $description
+                || 'delegatura' === $description
+                || 'dzielnica' === $description
+            ) {
+                continue;
+            }
 
             $name = mb_strtolower($element->NAZWA);
             $path = $this->formatter->set($name)
