@@ -54,7 +54,7 @@ class ParseCommand extends Command
         }
         $symbols = [];
         foreach ($xml->catalog->row as $element) {
-            $description = (string)$element->NAZWA_DOD;
+            $description = (string) $element->NAZWA_DOD;
 
             if ('podregion' === $description
                 || 'region' === $description
