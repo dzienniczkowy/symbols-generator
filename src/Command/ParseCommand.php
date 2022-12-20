@@ -81,13 +81,13 @@ class ParseCommand extends Command
                 || 'gmina wiejska' === $description
             ) {
                 $symbols['gmina'.$path] = 'Gmina '.$this->formatter->set($name)->upper()->get();
-                $symbols[$path.'2'] = $this->formatter->set($name)->upper()->get().'2';
+                $symbols[$path.'2'] = $this->formatter->set($name)->upper()->get().' 2';
             }
             if ('miasto na prawach powiatu' === $description
                 || 'gmina miejska' === $description
                 || 'gmina wiejska' === $description
             ) {
-                $symbols[$path.'projekt'] = $this->formatter->set($name)->upper()->get().'projekt';
+                $symbols[$path.'projekt'] = $this->formatter->set($name)->upper()->get().' projekt';
             }
             $symbols[$path] = $this->formatter->set($name)->upper()->get();
         }
