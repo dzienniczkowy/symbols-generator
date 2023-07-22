@@ -2,7 +2,6 @@
 
 namespace Wulkanowy\SymbolsGenerator\Command;
 
-use function json_decode;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -10,6 +9,8 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Wulkanowy\SymbolsGenerator\Service\Filesystem;
 use Wulkanowy\SymbolsGenerator\Service\OutputGeneratorService;
+
+use function json_decode;
 
 class GenerateCommand extends Command
 {
